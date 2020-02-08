@@ -1,16 +1,19 @@
-package Model;
+package model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public enum Deck {
+/**
+ * The Hanabi card deck
+ */
+public enum HanabiCards {
 
     DECK;
 
     private List<Card> cards;
 
-    Deck() {
+    HanabiCards() {
         cards = new ArrayList<>(50);
         for (CardColor cardColor : CardColor.values()) {
             for (CardNumber cardNumber : CardNumber.values()) {
@@ -45,9 +48,4 @@ public enum Deck {
         }
         return cards.remove(0);
     }
-
-    public void push(Card card) {
-        cards.add(card);
-    }
-
 }

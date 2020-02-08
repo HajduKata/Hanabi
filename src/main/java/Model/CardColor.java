@@ -1,9 +1,9 @@
-package Model;
+package model;
 
 import java.awt.Color;
 
 public enum CardColor {
-    RED("r"), YELLOW("y"), GREEN("g"), BLUE("b"), WHITE("w");
+    RED("r"), YELLOW("y"), GREEN("g"), BLUE("b"), WHITE("w")/*, RAINBOW("rainbow")*/;
 
     private String value;
 

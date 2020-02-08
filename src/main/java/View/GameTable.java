@@ -1,412 +1,168 @@
-package View;
+package view;
 
-import Model.Card;
-import Model.CardColor;
-import Model.CardNumber;
-import Model.ClueSymbol;
-import Model.Deck;
-import Model.Player;
-import Model.Players;
+import model.Card;
+import model.CardColor;
+import model.Clues;
+import model.Fireworks;
+import model.Player;
+import model.Players;
+import model.SelectedSymbol;
 
-import javax.imageio.ImageIO;
-import javax.swing.JComponent;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.plaf.BorderUIResource;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.FlowLayout;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-// CardTable
-public class GameTable extends JComponent implements MouseListener {
-    private static final int TABLE_SIZE = 800;    // Pixels.
-    private static final int MAX_NUMBER_OF_PLAYERS = 5;
-    private static final int MAX_NUMBER_OF_CLUES = 8;
-    private static final int MAX_NUMBER_OF_FAILS = 3;
+import static model.Card.CARD_OFFSET_X;
+import static model.Card.CARD_SIZE_X;
+import static model.Card.CARD_SIZE_Y;
+import static model.Card.numberOfColors;
+import static view.HanabiUtilities.SYMBOL_SIZE_X;
 
-    public static final int CARD_WIDTH_HEIGHT = 130;
-    public static final int COMPONENT_WIDTH_HEIGHT = 40;
-    public static final int CARD_OFFSET = 60;
-    public static final int COLOR_OFFSET_X = 18;
-    public static final int COLOR_OFFSET_Y = 40;
-    public static final int NUMBER_OFFSET_X = 18;
-    public static final int NUMBER_OFFSET_Y = 5;
+/**
+ * The view of the table
+ * Left panel: players cards
+ * Mid panel: fireworks and dropped cards
+ * Right panel: control symbols
+ */
+public class GameTable extends JFrame {
+    private static final int TABLE_SIZE_WIDTH = 1200;
+    private static final int TABLE_SIZE_HEIGHT = 800;
 
-    public static final int CANCEL_STARTING_X = 1350;
-    public static final int CANCEL_STARTING_Y = COMPONENT_WIDTH_HEIGHT + 5;
+    public static final int BORDER_SIZE = 10;
+    public static final int GAP = 5;
 
-    public List<Player> players;
-    private List<ClueSymbol> symbols;
-    private int numberOfPlayers = 3; //MAX_NUMBER_OF_PLAYERS
-    private int numberOfClues = MAX_NUMBER_OF_CLUES;
-    private int numberOfFails = MAX_NUMBER_OF_FAILS;
+    private static final int LEFT_PANEL_WIDTH = CARD_SIZE_X + 4 * CARD_OFFSET_X + BORDER_SIZE;
+    private static final int MID_PANEL_WIDTH = 5 * CARD_SIZE_X + 4 * GAP + BORDER_SIZE;
+    public static final int RIGHT_PANEL_WIDTH = (numberOfColors + 1) * SYMBOL_SIZE_X + numberOfColors * GAP + BORDER_SIZE;
+    private static final int CONTROL_PANEL_HEIGHT = 300;
 
-    private Image backOfCard;
+    private static final Dimension MIN_TABLE_DIMENSION = new Dimension(TABLE_SIZE_WIDTH, TABLE_SIZE_HEIGHT);
+    public static final Dimension LEFT_PANEL_DIMENSION = new Dimension(LEFT_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
+    private static final Dimension MID_PANEL_DIMENSION = new Dimension(MID_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
+    public static final Dimension RIGHT_PANEL_DIMENSION = new Dimension(RIGHT_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
+    public static final Dimension CARD_COLORS_DIMENSION =
+            new Dimension(numberOfColors * CARD_SIZE_X + (numberOfColors - 1) * GAP + BORDER_SIZE, CARD_SIZE_Y + 4 * BORDER_SIZE);
+    public static final int BUTTON_HEIGHT = 25;
 
-    private boolean hasSelectedSymbol;
-    private CardColor selectedColor;
-    private CardNumber selectedNumber;
+    private final boolean fullscreen = true; // TODO from properties
 
     public GameTable() {
-        //... Add mouse listeners.
-        addMouseListener(this);
-        loadBackOfCards();
 
-        initGame(numberOfPlayers);
-    }
-
-    private void initGame(int numberOfPlayers) {
-        ClassLoader classLoader = this.getClass().getClassLoader();
-
-        Deck.DECK.shuffle();
-        symbols = new ArrayList<>(10);
-        players = Players.getThePlayers(numberOfPlayers);
-        //This is the human player
-        Player human = players.get(0);
-        for (int i = 0; i < human.getHand().cards.size(); i++) {
-            human.getHand().cards.get(i).setX(10 + i * CARD_OFFSET);
-            human.getHand().cards.get(i).setY(20);
-        }
-        human.setX(10);
-        human.setY(20);
-        players.add(human);
-
-        //These are the AI players
-        for (int i = 1; i < numberOfPlayers; i++) {
-            Player ai = players.get(i);
-            for (int j = 0; j < ai.getHand().cards.size(); j++) {
-                ai.getHand().cards.get(j).setX(10 + j * CARD_OFFSET);
-                ai.getHand().cards.get(j).setY(20 + i * (CARD_WIDTH_HEIGHT + 20));
-            }
-            ai.setX(10);
-            ai.setY(20 + i * (CARD_WIDTH_HEIGHT + 20));
-            players.add(ai);
-        }
-
-        //Symbols
-        //Colors
-        int x = 1100; // absolute pixel
-        int y = 20;
-        for (CardColor color : CardColor.values()) {
-            String actualColor = getColorName(color);
-            URL imageURL = classLoader.getResource("hanabi_cards/" + actualColor + ".png");
-            ClueSymbol symbol = new ClueSymbol(loadCardImage(imageURL), x, y, color, null);
-            symbols.add(symbol);
-            x += COMPONENT_WIDTH_HEIGHT + 5;
-        }
-        //Numbers
-        x = 1100; // absolute pixel
-        y += 50;
-        for (CardNumber number : CardNumber.values()) {
-            URL imageURL = classLoader.getResource("hanabi_cards/" + number.getValue() + ".png");
-            ClueSymbol symbol = new ClueSymbol(loadCardImage(imageURL), x, y, null, number);
-            symbols.add(symbol);
-            x += COMPONENT_WIDTH_HEIGHT + 5;
-        }
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(1500, 870);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        //Background
-        g.setColor(new Color(220, 220, 255));
-        g.fillRect(0, 0, getWidth(), getHeight());
-        g.setColor(Color.BLACK);
-
-        for (Player player : players) {
-            g2d.setFont(new Font("LithosPro-Black", Font.BOLD, 14));
-            g2d.drawString(player.name, player.getX(), player.getY() - 5);
-            paintCard(g, player);
-        }
-
-        g2d.drawString("Goal Columns", 400, 15);
-        paintGoalColumns(g);
-        g.setColor(Color.BLACK);
-        g2d.drawString("Discard Piles", 400, CARD_WIDTH_HEIGHT + 35);
-        paintDiscardPile(g);
-        paintClueSymbols(g);
-        g.setColor(Color.BLACK);
-        g2d.drawString("Clue Tokens", 1100, 195);
-        paintClueTokens(g);
-        g.setColor(Color.BLACK);
-        g2d.drawString("Fail Tokens", 1100, 260);
-        paintFailTokens(g);
-        paintCancelButton(g);
-    }
-
-    private void paintCard(Graphics g, Player player) {
-        if (player.isHumanPlayer()) {
-            for (Card card : player.getHand().cards) {
-                g.drawImage(backOfCard, card.getX(), card.getY(), CARD_WIDTH_HEIGHT, CARD_WIDTH_HEIGHT, this);
-                for (ClueSymbol symbol : symbols) {
-                    if (card.knowsColor && card.getColor().equals(symbol.getColor())) {
-                        g.drawImage(symbol.getImage(), card.getX() + COLOR_OFFSET_X, card.getY() + COLOR_OFFSET_Y, COMPONENT_WIDTH_HEIGHT, COMPONENT_WIDTH_HEIGHT, this);
-                    }
-                    if (card.knowsNumber && card.getNumber().equals(symbol.getNumber())) {
-                        g.drawImage(symbol.getImage(), card.getX() + NUMBER_OFFSET_X, card.getY() + NUMBER_OFFSET_Y, COMPONENT_WIDTH_HEIGHT, COMPONENT_WIDTH_HEIGHT, this);
-                    }
-                }
-            }
+        setTitle("Hanabi");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        if (fullscreen) {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+            setUndecorated(false); // hide|show window header
         } else {
-            for (Card card : player.getHand().cards) {
-                g.drawImage(card.image, card.getX(), card.getY(), CARD_WIDTH_HEIGHT, CARD_WIDTH_HEIGHT, this);
-                for (ClueSymbol symbol : symbols) {
-                    if (card.knowsColor && card.getColor().equals(symbol.getColor())) {
-                        g.drawImage(symbol.getImage(), card.getX() + COLOR_OFFSET_X, card.getY() + COLOR_OFFSET_Y, COMPONENT_WIDTH_HEIGHT - 10, COMPONENT_WIDTH_HEIGHT - 10, this);
-                    }
-                    if (card.knowsNumber && card.getNumber().equals(symbol.getNumber())) {
-                        g.drawImage(symbol.getImage(), card.getX() + NUMBER_OFFSET_X, card.getY() + NUMBER_OFFSET_Y, COMPONENT_WIDTH_HEIGHT - 10, COMPONENT_WIDTH_HEIGHT - 10, this);
-                    }
-                }
-            }
+            setPreferredSize(MIN_TABLE_DIMENSION);
         }
+
+        initTable();
+
+        pack();
+        setVisible(true);
+        requestFocus();
     }
 
-    private void paintGoalColumns(Graphics g) {
-        int x = 400;
-        int y = 20;
+    private void initTable() {
+        // player cards pane
+        JPanel playersContainer = new JPanel();
+        playersContainer.setPreferredSize(LEFT_PANEL_DIMENSION);
+        playersContainer.setLayout(new BoxLayout(playersContainer, BoxLayout.Y_AXIS));
+        playersContainer.setAlignmentX(LEFT_ALIGNMENT);
+        playersContainer.setAlignmentY(TOP_ALIGNMENT);
+        for (Player player : Players.getThePlayers()) {
+            PlayerPanel playerPanel = new PlayerPanel(player);
+            player.setPlayerPanel(playerPanel);
+            playersContainer.add(playerPanel);
+        }
+
+        // fireworks and discarded card pane
+        JPanel placedCardsContainer = new JPanel();
+        placedCardsContainer.setPreferredSize(MID_PANEL_DIMENSION);
+        placedCardsContainer.setLayout(new BoxLayout(placedCardsContainer, BoxLayout.Y_AXIS));
+        placedCardsContainer.setAlignmentX(LEFT_ALIGNMENT);
+        placedCardsContainer.setAlignmentY(TOP_ALIGNMENT);
+        // add empty fireworks
+        placedCardsContainer.add(new FireworksPanel(Fireworks.getFireworks()));
+        // create empty droped cards
+        SortedMap<CardColor, Set<Card>> discardedCards = new TreeMap<>();
+        Set<Card> emptyCard = new TreeSet<>();
         for (CardColor color : CardColor.values()) {
-            g.setColor(color.getPaintColor(color));
-            g.drawRect(x, y, CARD_WIDTH_HEIGHT, CARD_WIDTH_HEIGHT);
-            //g.drawImage(backOfCard, x, y, CARD_WIDTH_HEIGHT, CARD_WIDTH_HEIGHT, this);
-            x += CARD_WIDTH_HEIGHT + 5;
+            emptyCard.add(new Card(color));
+            discardedCards.put(color, emptyCard);
         }
-    }
+        // add empty droped cards
+        placedCardsContainer.add(new DiscardedCardsPanel(discardedCards));
 
-    private void paintDiscardPile(Graphics g) {
-        int x = 400;
-        int y = CARD_WIDTH_HEIGHT + 40;
-        for (CardColor color : CardColor.values()) {
-            g.setColor(color.getPaintColor(color));
-            g.drawRect(x, y, CARD_WIDTH_HEIGHT, CARD_WIDTH_HEIGHT);
-            //g.drawImage(card, x, y, CARD_WIDTH_HEIGHT, CARD_WIDTH_HEIGHT, this);
-            y += CARD_WIDTH_HEIGHT + 5;
-        }
-    }
+        // control pane and information pane
+        JPanel controlContainer = new JPanel();
+        CardLayout cardLayout = new CardLayout();
+        controlContainer.setPreferredSize(RIGHT_PANEL_DIMENSION);
+        controlContainer.setLayout(new BoxLayout(controlContainer, BoxLayout.Y_AXIS));
+        controlContainer.setAlignmentX(LEFT_ALIGNMENT);
+        controlContainer.setAlignmentY(TOP_ALIGNMENT);
 
-    private void paintClueSymbols(Graphics g) {
-        for (ClueSymbol symbol : symbols) {
-            g.drawImage(symbol.getImage(), symbol.getX(), symbol.getY(), COMPONENT_WIDTH_HEIGHT, COMPONENT_WIDTH_HEIGHT, this);
-        }
-    }
+        // Clues and Fails
+        CluePanel cluePanel = new CluePanel(new Clues(3, 8));
+        cluePanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 70));
+        cluePanel.setLayout(new BoxLayout(cluePanel, BoxLayout.Y_AXIS));
+        cluePanel.setAlignmentX(CENTER_ALIGNMENT);
+        cluePanel.setAlignmentY(TOP_ALIGNMENT);
+        // Control buttons
+        JPanel controlButtonsContainer = new JPanel();
+        controlButtonsContainer.setLayout(new BoxLayout(controlButtonsContainer, BoxLayout.Y_AXIS));
+        controlButtonsContainer.setAlignmentX(CENTER_ALIGNMENT);
+        controlButtonsContainer.setAlignmentY(TOP_ALIGNMENT);
+        JButton playCardButton = new JButton("Play a card");
+        JButton discardCardButton = new JButton("Discard a card");
+        JButton giveHintButton = new JButton("Give a hint");
+        playCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
+        discardCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
+        giveHintButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
+        controlButtonsContainer.add(playCardButton);
+        controlButtonsContainer.add(Box.createVerticalStrut(10));
+        controlButtonsContainer.add(discardCardButton);
+        controlButtonsContainer.add(Box.createVerticalStrut(10));
+        controlButtonsContainer.add(giveHintButton);
+        controlButtonsContainer.add(Box.createVerticalStrut(10));
 
-    private String getColorName(CardColor color) {
-        String actual = "";
-        switch (color) {
-            case BLUE:
-                actual = "blue";
-                break;
-            case GREEN:
-                actual = "green";
-                break;
-            case RED:
-                actual = "red";
-                break;
-            case WHITE:
-                actual = "white";
-                break;
-            case YELLOW:
-                actual = "yellow";
-                break;
-        }
-        return actual;
-    }
+        JPanel controlPanel = new JPanel(cardLayout);
+        Border border = new BorderUIResource.LineBorderUIResource(Color.BLACK);
+        controlPanel.setBorder(border);
+        controlPanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, CONTROL_PANEL_HEIGHT));
 
-    private void paintClueTokens(Graphics g) {
-        int x = 1100;
-        int y = 200;
-        Image clue;
-        ClassLoader cldr = this.getClass().getClassLoader();
-        URL imageURL = cldr.getResource("hanabi_cards/clue.png");
-        for (int i = 0; i < numberOfClues; i++) {
-            try {
-                assert imageURL != null;
-                clue = ImageIO.read(new File(imageURL.getPath()));
-                g.drawImage(clue, x, y, COMPONENT_WIDTH_HEIGHT, COMPONENT_WIDTH_HEIGHT, this);
-                x += COMPONENT_WIDTH_HEIGHT + 5;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+        JLabel playCard = new JLabel("Select a card to play from your hand");
+        JLabel discardCard = new JLabel("Select a card to discard from your hand");
+        controlPanel.add(playCard, "play");
+        controlPanel.add(discardCard, "discard");
+        controlPanel.add(new ControlPanel(SelectedSymbol.getSelectedSymbol()), "hint");
+        playCardButton.addActionListener(e -> cardLayout.show(controlPanel, "play"));
+        discardCardButton.addActionListener(e -> cardLayout.show(controlPanel, "discard"));
+        giveHintButton.addActionListener(e -> cardLayout.show(controlPanel, "hint"));
 
-    private void paintFailTokens(Graphics g) {
-        int x = 1100;
-        int y = 265;
-        Image clue;
-        ClassLoader cldr = this.getClass().getClassLoader();
-        URL imageURL = cldr.getResource("hanabi_cards/fail.png");
-        for (int i = 0; i < numberOfFails; i++) {
-            try {
-                assert imageURL != null;
-                clue = ImageIO.read(new File(imageURL.getPath()));
-                g.drawImage(clue, x, y, COMPONENT_WIDTH_HEIGHT, COMPONENT_WIDTH_HEIGHT, this);
-                x += COMPONENT_WIDTH_HEIGHT + 5;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+        controlContainer.add(cluePanel);
+        controlContainer.add(controlButtonsContainer);
+        controlContainer.add(controlPanel);
 
-    private void paintCancelButton(Graphics g) {
-        Image cancelButton;
-        ClassLoader cldr = this.getClass().getClassLoader();
-        URL imageURL = cldr.getResource("Cancel.png");
-        try {
-            assert imageURL != null;
-            cancelButton = ImageIO.read(new File(imageURL.getPath()));
-            g.drawImage(cancelButton, CANCEL_STARTING_X, CANCEL_STARTING_Y, COMPONENT_WIDTH_HEIGHT + 5, COMPONENT_WIDTH_HEIGHT + 5, this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Image loadCardImage(URL imageURL) {
-        try {
-            assert imageURL != null;
-            return ImageIO.read(new File(imageURL.getPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void loadBackOfCards() {
-        ClassLoader cldr = this.getClass().getClassLoader();
-        URL imageURL = cldr.getResource("hanabi_cards/zbackground.png");
-        try {
-            assert imageURL != null;
-            backOfCard = ImageIO.read(new File(imageURL.getPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-
-        //if the mouse clicked on a symbol
-        for (ClueSymbol symbol : symbols) {
-            if (symbol.contains(x, y)) {
-                showSelectedSymbols(symbol);
-                hasSelectedSymbol = true;
-            }
-        }
-
-        //if the mouse clicked on the cancel button
-        if (clickContains(x, y, CANCEL_STARTING_X, CANCEL_STARTING_Y, CANCEL_STARTING_X + COMPONENT_WIDTH_HEIGHT, CANCEL_STARTING_Y + COMPONENT_WIDTH_HEIGHT)) {
-            resetAllCards();
-        }
-
-        //if the mouse clicked on a player's hand
-        for (Player player : players) {
-            if (!player.isHumanPlayer()) {
-                if (clickContains(x, y, player.getX(), player.getY(), player.getX() + CARD_WIDTH_HEIGHT + 4 * CARD_OFFSET, player.getY() + CARD_WIDTH_HEIGHT)) {
-                    if (hasSelectedSymbol && decreaseClues()) {
-                        markSelectedClue(player);
-                        resetAllCards();
-                    }
-                    break;
-                }
-            }
-        }
-
-        //after every click, repaint the whole screen
-        this.repaint();
-    }
-
-    /* This method highlights all of the cards that match the selected symbol */
-    private void showSelectedSymbols(ClueSymbol symbol) {
-        for (Player player : players) {
-            if (!player.isHumanPlayer()) {
-                for (Card card : player.getHand().cards) {
-                    card.reset();
-                    if (symbol.getColor() != null && symbol.getColor().equals(card.getColor())
-                            || symbol.getNumber() != null && symbol.getNumber().equals(card.getNumber())) {
-                        card.selected();
-                        selectedColor = symbol.getColor();
-                        selectedNumber = symbol.getNumber();
-                        //TODO keret a kijelölt képeknek - graphicsot nem lehet itt elérni?
-                        /*g.setColor(Color.MAGENTA);
-                        g.drawRect(1500, 1500, 30, 30);
-                        g.drawRect(card.getX() - 1, card.getY() - 1, CARD_WIDTH_HEIGHT + 1, CARD_WIDTH_HEIGHT + 1);*/
-                    }
-                }
-            }
-        }
-    }
-
-    private void resetAllCards() {
-        for (Player player : players) {
-            if (!player.isHumanPlayer()) {
-                for (Card card : player.getHand().cards) {
-                    card.reset();
-                    hasSelectedSymbol = false;
-                    selectedColor = null;
-                    selectedNumber = null;
-                }
-            }
-        }
-    }
-
-    private boolean decreaseClues() {
-        if (numberOfClues > 0) {
-            numberOfClues--;
-            return true;
-        }
-        return false;
-    }
-
-    private void markSelectedClue(Player player) {
-        for (Card card : player.getHand().cards) {
-            if (card.isSelected()) {
-                if (card.getColor().equals(selectedColor)) {
-                    card.knowsColor = true;
-                }
-                if (card.getNumber().equals(selectedNumber)) {
-                    card.knowsNumber = true;
-                }
-            }
-        }
-    }
-
-    public static boolean clickContains(int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
-        return mouseX > startX && mouseX < endX &&
-                mouseY > startY && mouseY < endY;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+        // add containers to the card table
+        setLayout(new FlowLayout(FlowLayout.LEADING));
+        getContentPane().add(playersContainer, BorderLayout.LINE_START);
+        getContentPane().add(placedCardsContainer, BorderLayout.CENTER);
+        getContentPane().add(controlContainer, BorderLayout.LINE_END);
     }
 }

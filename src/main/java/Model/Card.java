@@ -1,31 +1,58 @@
-package Model;
+package model;
 
-import View.GameTable;
-
-import javax.imageio.ImageIO;
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.Objects;
 
-import static View.GameTable.CARD_WIDTH_HEIGHT;
+import static view.HanabiUtilities.classLoader;
+import static view.HanabiUtilities.loadImage;
 
-public class Card {
-    private CardColor cardColor;
-    private CardNumber cardNumber;
-    public Image image;
-    private boolean selected = false;
+/**
+ * Model of a card
+ */
+public class Card implements Comparable<Card> {
+    // UI contants
+    public static final int CARD_SIZE_X = 130;
+    public static final int CARD_SIZE_Y = 130;
+    public static final int CARD_OFFSET_X = 60;
+    public static final int CARD_OFFSET_Y = 10;
+
+    public static int numberOfColors = 5; // TODO get from settings
+    // UI fields
+    public BufferedImage image;
     private int x;
     private int y;
-    public boolean knowsColor = false;
-    public boolean knowsNumber = false;
+    // Card model fields
+    private CardColor cardColor;
+    private CardNumber cardNumber;
+    private boolean selected = false;
+    public boolean knownColor = false;
+    public boolean knownNumber = false;
 
+
+    /**
+     * Constructor for card with only color for empty card place.
+     *
+     * @param cardColor the color of the card
+     */
+    public Card(CardColor cardColor) {
+        this.cardColor = cardColor;
+        this.cardNumber = CardNumber.ZERO;
+    }
+
+    /**
+     * Constructor for a card.
+     *
+     * @param cardColor  the color of the card
+     * @param cardNumber the number of the card
+     */
     public Card(CardColor cardColor, CardNumber cardNumber) {
         this.cardColor = cardColor;
         this.cardNumber = cardNumber;
-        ClassLoader cldr = this.getClass().getClassLoader();
-        URL imageURL = cldr.getResource("hanabi_cards/" + cardColor.getValue() + cardNumber.getValue() + ".png");
-        this.image = GameTable.loadCardImage(imageURL);
+
+        String cardFilename = cardColor.getValue() + cardNumber.getValue();
+        URL imageURL = Objects.requireNonNull(classLoader.getResource("hanabi_cards/" + cardFilename + ".png"));
+        this.image = loadImage(imageURL);
     }
 
     public CardColor getColor() {
@@ -48,32 +75,27 @@ public class Card {
         }
     }
 
-    public boolean contains(int x, int y) {
-        return (x > this.x && x < (this.x + CARD_WIDTH_HEIGHT) &&
-                y > this.y && y < (this.y + CARD_WIDTH_HEIGHT));
-    }
-
     public int getX() {
         return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public void setX(int x) {
         this.x = x;
     }
 
+    public int getY() {
+        return y;
+    }
+
     public void setY(int y) {
         this.y = y;
     }
 
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    @Override
+    public int compareTo(Card other) {
+        Card self = this;
+        int selfHash = self.getColor().ordinal() * 10 + self.getNumber().ordinal();
+        int otherHash = other.getColor().ordinal() * 10 + other.getNumber().ordinal();
+        return selfHash - otherHash;
     }
 }
