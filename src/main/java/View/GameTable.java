@@ -48,7 +48,7 @@ public class GameTable extends JFrame {
     private static final int LEFT_PANEL_WIDTH = CARD_SIZE_X + 4 * CARD_OFFSET_X + BORDER_SIZE;
     private static final int MID_PANEL_WIDTH = 5 * CARD_SIZE_X + 4 * GAP + BORDER_SIZE;
     public static final int RIGHT_PANEL_WIDTH = (numberOfColors + 1) * SYMBOL_SIZE_X + numberOfColors * GAP + BORDER_SIZE;
-    private static final int CONTROL_PANEL_HEIGHT = 300;
+    private static final int CONTROL_PANEL_HEIGHT = 150;
 
     private static final Dimension MIN_TABLE_DIMENSION = new Dimension(TABLE_SIZE_WIDTH, TABLE_SIZE_HEIGHT);
     public static final Dimension LEFT_PANEL_DIMENSION = new Dimension(LEFT_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
@@ -146,10 +146,12 @@ public class GameTable extends JFrame {
         controlPanel.setBorder(border);
         controlPanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, CONTROL_PANEL_HEIGHT));
 
-        JLabel playCard = new JLabel("Select a card to play from your hand");
-        JLabel discardCard = new JLabel("Select a card to discard from your hand");
-        controlPanel.add(playCard, "play");
-        controlPanel.add(discardCard, "discard");
+        JLabel playCardLabel = new JLabel("Select a card to play from your hand");
+        JLabel discardCardLabel = new JLabel("Select a card to discard from your hand");
+        playCardLabel.setFont (playCardLabel.getFont ().deriveFont (16.0f));
+        discardCardLabel.setFont (discardCardLabel.getFont ().deriveFont (16.0f));
+        controlPanel.add(playCardLabel, "play");
+        controlPanel.add(discardCardLabel, "discard");
         controlPanel.add(new ControlPanel(SelectedSymbol.getSelectedSymbol()), "hint");
         playCardButton.addActionListener(e -> cardLayout.show(controlPanel, "play"));
         discardCardButton.addActionListener(e -> cardLayout.show(controlPanel, "discard"));
