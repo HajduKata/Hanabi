@@ -29,7 +29,7 @@ import static view.HanabiUtilities.classLoader;
 
 public class ControlPanel extends JPanel {
     private static final String SYMBOLS_TITLE = "Select Color or Number";
-    private static final Color BG_COLOR = new Color(150, 150, 150);
+    private static final Color BG_COLOR = Color.decode("#003366");
 
     private SelectedSymbol selectedSymbol;
     private PlayerPanel playerPanel;
@@ -52,7 +52,6 @@ public class ControlPanel extends JPanel {
             colorButton.addActionListener(e -> {
                 SelectedSymbol.clearSelection();
                 SelectedSymbol.setSelectedColor(color);
-                //TODO meghívni  a megfelelő Card kiemelését végző metódust a Players-ben
                 highlightCard();
             });
             x += SYMBOL_SIZE_X + COLOR_OFFSET_X;
@@ -70,13 +69,11 @@ public class ControlPanel extends JPanel {
                 numberButton.addActionListener(e -> {
                     SelectedSymbol.clearSelection();
                     SelectedSymbol.setSelectedNumber(number);
-                    //TODO meghívni  a megfelelő Card kiemelését végző metódust a Players-ben
                     highlightCard();
                 });
                 x += SYMBOL_SIZE_X + COLOR_OFFSET_X;
             }
         }
-
     }
 
     private void highlightCard() {
@@ -89,13 +86,11 @@ public class ControlPanel extends JPanel {
                     if (color != null && color.equals(card.getColor())
                             || number != null && number.equals(card.getNumber())) {
                         card.selected();
-
                     }
                 }
             }
             player.getPlayerPanel().repaint();
         }
-
     }
 
 

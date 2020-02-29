@@ -2,18 +2,20 @@ package view;
 
 import model.Card;
 import model.CardColor;
-import model.Clues;
 import model.Fireworks;
 import model.Player;
 import model.Players;
 import model.SelectedSymbol;
+import model.Tokens;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.plaf.BorderUIResource;
 import java.awt.BorderLayout;
@@ -21,6 +23,10 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Window;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -45,7 +51,7 @@ public class GameTable extends JFrame {
     public static final int BORDER_SIZE = 10;
     public static final int GAP = 5;
 
-    private static final int LEFT_PANEL_WIDTH = CARD_SIZE_X + 4 * CARD_OFFSET_X + BORDER_SIZE;
+    private static final int LEFT_PANEL_WIDTH = CARD_SIZE_X + 5 * CARD_OFFSET_X + BORDER_SIZE;
     private static final int MID_PANEL_WIDTH = 5 * CARD_SIZE_X + 4 * GAP + BORDER_SIZE;
     public static final int RIGHT_PANEL_WIDTH = (numberOfColors + 1) * SYMBOL_SIZE_X + numberOfColors * GAP + BORDER_SIZE;
     private static final int CONTROL_PANEL_HEIGHT = 150;
@@ -79,6 +85,9 @@ public class GameTable extends JFrame {
     }
 
     private void initTable() {
+        //Initialization with 8 clues and 3 lives
+        Tokens tokens = Tokens.getTokens();
+
         // player cards pane
         JPanel playersContainer = new JPanel();
         playersContainer.setPreferredSize(LEFT_PANEL_DIMENSION);
@@ -86,7 +95,8 @@ public class GameTable extends JFrame {
         playersContainer.setAlignmentX(LEFT_ALIGNMENT);
         playersContainer.setAlignmentY(TOP_ALIGNMENT);
         for (Player player : Players.getThePlayers()) {
-            PlayerPanel playerPanel = new PlayerPanel(player);
+            PlayerPanel playerPanel = new PlayerPanel(player, tokens);
+            playerPanel.addMouseListener(playerPanel);
             player.setPlayerPanel(playerPanel);
             playersContainer.add(playerPanel);
         }
@@ -109,7 +119,7 @@ public class GameTable extends JFrame {
         // add empty droped cards
         placedCardsContainer.add(new DiscardedCardsPanel(discardedCards));
 
-        // control pane and information pane
+        // control panel and information panel
         JPanel controlContainer = new JPanel();
         CardLayout cardLayout = new CardLayout();
         controlContainer.setPreferredSize(RIGHT_PANEL_DIMENSION);
@@ -118,7 +128,7 @@ public class GameTable extends JFrame {
         controlContainer.setAlignmentY(TOP_ALIGNMENT);
 
         // Clues and Fails
-        CluePanel cluePanel = new CluePanel(new Clues(3, 8));
+        CluePanel cluePanel = new CluePanel(tokens);
         cluePanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 70));
         cluePanel.setLayout(new BoxLayout(cluePanel, BoxLayout.Y_AXIS));
         cluePanel.setAlignmentX(CENTER_ALIGNMENT);
@@ -161,7 +171,7 @@ public class GameTable extends JFrame {
         controlContainer.add(controlButtonsContainer);
         controlContainer.add(controlPanel);
 
-        // add containers to the card table
+        // Add containers to the card table
         setLayout(new FlowLayout(FlowLayout.LEADING));
         getContentPane().add(playersContainer, BorderLayout.LINE_START);
         getContentPane().add(placedCardsContainer, BorderLayout.CENTER);

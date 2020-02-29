@@ -2,6 +2,8 @@ package view;
 
 import model.Card;
 import model.Player;
+import model.SelectedSymbol;
+import model.Tokens;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -9,6 +11,8 @@ import javax.swing.plaf.BorderUIResource;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
@@ -19,14 +23,15 @@ import static view.HanabiUtilities.NUMBER_OFFSET_X;
 import static view.HanabiUtilities.NUMBER_OFFSET_Y;
 import static view.HanabiUtilities.SYMBOL_WIDTH_HEIGHT;
 
-public class PlayerPanel extends JPanel {
-    private static final Color BG_COLOR = Color.CYAN;
+public class PlayerPanel extends JPanel implements MouseListener {
+    private static final Color BG_COLOR = Color.decode("#003366");
 
     private final Player player;
+    private final Tokens tokens;
 
-
-    PlayerPanel(Player player) {
+    PlayerPanel(Player player, Tokens tokens) {
         this.player = player;
+        this.tokens = tokens;
 
         setPreferredSize(LEFT_PANEL_DIMENSION);
         setBackground(BG_COLOR);
@@ -75,5 +80,55 @@ public class PlayerPanel extends JPanel {
         if (card.knownNumber) {
             drawCard(g, HintSymbols.getImageByNumber(card.getNumber()), card.getX() + NUMBER_OFFSET_X, card.getY() + NUMBER_OFFSET_Y, SYMBOL_WIDTH_HEIGHT - 10, SYMBOL_WIDTH_HEIGHT - 10);
         }
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    // TODO PROBLEM: ha több playerpanelre kattintunk egymás után, mindegyik nyit egy ablakot, ezt letiltani
+    /**
+     * When clicked on this player panel
+     *
+     * @param mouseE mouse event object
+     */
+    @Override
+    public void mouseClicked(MouseEvent mouseE) {
+        // If there is no symbol selected
+        if (SelectedSymbol.getSelectedColor() == null && SelectedSymbol.getSelectedNumber() == null) {
+            return;
+        }
+
+        for (Card card : this.getPlayer().getHand().cards) {
+            if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedColor() != null && SelectedSymbol.getSelectedColor() == card.getColor()) {
+                card.knownColor = true;
+            } else if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedNumber() != null && SelectedSymbol.getSelectedNumber() == card.getNumber()) {
+                card.knownNumber = true;
+            }
+        }
+        //TODO ez nem csinálja még meg a clue csökkentést
+        this.repaint();
+        SelectedSymbol.clearSelection();
+        tokens.decreaseClues();
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

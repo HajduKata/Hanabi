@@ -15,7 +15,7 @@ import static view.GameTable.CARD_COLORS_DIMENSION;
 
 public class DiscardedCardsPanel extends JPanel {
     private static final String DISCARDED_CARDS_TITLE = "Discarded cards";
-    private static final Color BG_COLOR = new Color(180, 180, 180);
+    private static final Color BG_COLOR = Color.decode("#003366");
 
     private SortedMap<CardColor, Set<Card>> discardedCards;
 
