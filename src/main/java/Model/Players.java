@@ -1,37 +1,47 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static view.HanabiUtilities.AI;
 import static view.HanabiUtilities.HUMAN;
 
 /**
- * Singleton class representing one human and all AI players
+ * Representing one human and the other AI players
  */
-public enum Players {
+public class Players {
 
-    PLAYERS;
-
-    public static final int MIN_NUMBER_OF_PLAYERS = 2;
-    public static final int MAX_NUMBER_OF_PLAYERS = 5;
+    private static final int MIN_NUMBER_OF_PLAYERS = 2;
+    private static final int MAX_NUMBER_OF_PLAYERS = 5;
 
     private static List<Player> players;
-    public static int numberOfPlayers;
+    private static int playerIndex =0;
 
-    public static Iterable<Player> getThePlayers() {
+    static int numberOfPlayers;
+
+    public static List<Player> getThePlayers() {
         return players;
     }
 
-    public static List<Player> setupPlayers(int numberOfPlayers) {
+    public static Player nextPlayer() {
+        playerIndex++;
+        if (playerIndex>=numberOfPlayers) {
+            playerIndex = 0;
+        }
+        return players.get(playerIndex);
+    }
+
+    public static void setupPlayers(int numberOfPlayers, String name) {
         assert numberOfPlayers >= MIN_NUMBER_OF_PLAYERS;
         assert numberOfPlayers <= MAX_NUMBER_OF_PLAYERS;
 
         Players.numberOfPlayers = numberOfPlayers;
 
-        players = new ArrayList<>(MAX_NUMBER_OF_PLAYERS);
+        players = new ArrayList<>(numberOfPlayers);
         //Initialize the human player
         Player human = new Player(HUMAN);
+        human.setName(name);
         players.add(0, human); // human player is always the first indexed
 
         //Initialize all the AI players
@@ -39,17 +49,6 @@ public enum Players {
             Player ai = new Player(AI);
             players.add(i, ai);
         }
-        return players;
     }
 
-    public void markSelectidCards(CardColor color, CardNumber number) {
-// TODO if color != null ciklusban players -> getHand -> összes kártyára  card.setY(card.getY() - 10); amelyre egyezik a szín vagy szám
-
-//        for (Player player : players) {
-//            if (player.getHand().cards.contains(color)) {
-//                Card card = new Card(color, number);
-//                card.setY(card.getY() - 10);
-//            }
-//        }
-    }
 }

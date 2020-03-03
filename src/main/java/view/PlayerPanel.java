@@ -2,6 +2,7 @@ package view;
 
 import model.Card;
 import model.Player;
+import model.Players;
 import model.SelectedSymbol;
 import model.Tokens;
 
@@ -15,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.List;
 
 import static view.GameTable.LEFT_PANEL_DIMENSION;
 import static view.HanabiUtilities.COLOR_OFFSET_X;
@@ -37,6 +39,7 @@ public class PlayerPanel extends JPanel implements MouseListener {
         setBackground(BG_COLOR);
         setForeground(Color.BLACK);
         Border border = new BorderUIResource.TitledBorderUIResource(player.getName());
+        ((BorderUIResource.TitledBorderUIResource) border).setTitleColor(Color.WHITE);
         setBorder(border);
     }
 
@@ -86,7 +89,6 @@ public class PlayerPanel extends JPanel implements MouseListener {
         return player;
     }
 
-    // TODO PROBLEM: ha több playerpanelre kattintunk egymás után, mindegyik nyit egy ablakot, ezt letiltani
     /**
      * When clicked on this player panel
      *
@@ -106,10 +108,18 @@ public class PlayerPanel extends JPanel implements MouseListener {
                 card.knownNumber = true;
             }
         }
-        //TODO ez nem csinálja még meg a clue csökkentést
+
         this.repaint();
         SelectedSymbol.clearSelection();
         tokens.decreaseClues();
+
+        // TODO this only resets the actual player's cards, not all other players
+        List<Player> players = Players.getThePlayers();
+        for (Player player : players) {
+            for (Card card : player.getHand().cards) {
+                card.reset();
+            }
+        }
     }
 
     @Override

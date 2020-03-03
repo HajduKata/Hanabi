@@ -16,7 +16,7 @@ public class Hand {
     }
 
     Hand() {
-        cards = new ArrayList<>(Players.MAX_NUMBER_OF_PLAYERS);
+        cards = new ArrayList<>(NUM_OF_CARDS_IN_HAND);
     }
 
     void add(Card card) {

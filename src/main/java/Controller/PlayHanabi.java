@@ -3,12 +3,14 @@ package controller;
 import model.HanabiCards;
 import model.Player;
 import model.Players;
+import model.Tokens;
 import view.GameTable;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
@@ -16,48 +18,47 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Panel;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.ImageObserver;
-import java.util.List;
 
-public class PlayHanabi implements MouseListener, ImageObserver {
-    private static final int MAX_NUMBER_OF_CLUES = 8;
-    private static final int MAX_NUMBER_OF_FAILS = 3;
+public class PlayHanabi implements ImageObserver, ActionListener {
 
-    private int numberOfClues = MAX_NUMBER_OF_CLUES;
-    private int numberOfFails = MAX_NUMBER_OF_FAILS;
-
-    private int numOfPlayers = 5;
+    private boolean gameEnd = false;
 
     private GameTable table;
-    private List<Player> players;
+    JFrame settingsWindow = new JFrame();
+    private String name;
+    private JTextField playerName = new JTextField();
+    private int number;
+    private JComboBox numberOfPlayers = new JComboBox();
+    private String diff;
+    private JComboBox difficulty;
 
     public PlayHanabi() {
-        JFrame settingsWindow = new JFrame();
         settingsWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         settingsWindow.setTitle("Első Lépések");
-        settingsWindow.setSize(new Dimension(300,200));
+        settingsWindow.setSize(new Dimension(300, 200));
         settingsWindow.setLayout(new BorderLayout());
         settingsWindow.setLocationRelativeTo(null);
 
         JPanel settingsPanel = new JPanel();
-        settingsPanel.setLayout(new GridLayout(3, 2, 10,10));
+        settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-        //TODO méretek beállítás?, adatkezelés
         JLabel nameLabel = new JLabel("Név:");
         settingsPanel.add(nameLabel);
-        JTextField playerName = new JTextField();
         settingsPanel.add(playerName);
         JLabel numberOfPlayersLabel = new JLabel("Játékosok száma:");
         settingsPanel.add(numberOfPlayersLabel);
-        String[] numbers = {"2", "3", "4", "5"};
-        JComboBox numberOfPlayers = new JComboBox(numbers);
+        numberOfPlayers.addItem(2);
+        numberOfPlayers.addItem(3);
+        numberOfPlayers.addItem(4);
+        numberOfPlayers.addItem(5);
         settingsPanel.add(numberOfPlayers);
         JLabel difficultyLabel = new JLabel("Játék nehézsége:");
         settingsPanel.add(difficultyLabel);
         String[] diff = {"Könnyű", "Közepes", "Nehéz"};
-        JComboBox difficulty = new JComboBox(diff);
+        difficulty = new JComboBox(diff);
         settingsPanel.add(difficulty);
 
         settingsWindow.add(new Panel(), BorderLayout.PAGE_START);
@@ -66,50 +67,52 @@ public class PlayHanabi implements MouseListener, ImageObserver {
         settingsWindow.add(new Panel(), BorderLayout.LINE_END);
 
         JPanel buttonPanel = new JPanel();
-        JButton confirm = new JButton("Játék indítása!");
-        confirm.addActionListener(e -> initGame(settingsWindow, numOfPlayers));
+        JButton confirm = new JButton("Játék indítása");
+        // TODO initGame ne  az actionlistener-ben legyen!!!
+        confirm.addActionListener(this);
         buttonPanel.add(confirm);
 
         settingsWindow.add(buttonPanel, BorderLayout.PAGE_END);
         settingsWindow.setVisible(true);
 
-        //initGame(numOfPlayers);
+        //initGame(settingsWindow, numOfPlayers);
     }
 
     private void initGame(JFrame jFrame, int numberOfPlayers) {
         jFrame.dispose();
 
         HanabiCards.DECK.shuffle();
-        players = Players.setupPlayers(numberOfPlayers);
+        Players.setupPlayers(numberOfPlayers, name);
 
         table = new GameTable();
+        //play();
     }
 
     public void play() {
+        do {
+            Player actualPlayer = Players.nextPlayer();
+            if (actualPlayer.isAIPlayer()) {
+                // AI logic comes here
+                JOptionPane.showMessageDialog(null, actualPlayer.getName(), "Actual player", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                // TODO enable/disable mouse listeners
+                Tokens.getTokens().decreaseLife();
+            }
+            gameEnd = Tokens.getTokens().getLife() == 0;
+        } while (!gameEnd);
+    }
+
+    public void setGameEnd(boolean gameEnd) {
+        this.gameEnd = gameEnd;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-    }
+    public void actionPerformed(ActionEvent e) {
+        name = playerName.getText();
+        number = (int) numberOfPlayers.getSelectedItem();
+        diff = (String) difficulty.getSelectedItem();
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+        initGame(settingsWindow, number);
     }
 
     @Override

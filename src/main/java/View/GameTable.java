@@ -48,8 +48,8 @@ public class GameTable extends JFrame {
     private static final int TABLE_SIZE_WIDTH = 1200;
     private static final int TABLE_SIZE_HEIGHT = 800;
 
-    public static final int BORDER_SIZE = 10;
-    public static final int GAP = 5;
+    private static final int BORDER_SIZE = 10;
+    private static final int GAP = 5;
 
     private static final int LEFT_PANEL_WIDTH = CARD_SIZE_X + 5 * CARD_OFFSET_X + BORDER_SIZE;
     private static final int MID_PANEL_WIDTH = 5 * CARD_SIZE_X + 4 * GAP + BORDER_SIZE;
@@ -158,8 +158,8 @@ public class GameTable extends JFrame {
 
         JLabel playCardLabel = new JLabel("Select a card to play from your hand");
         JLabel discardCardLabel = new JLabel("Select a card to discard from your hand");
-        playCardLabel.setFont (playCardLabel.getFont ().deriveFont (16.0f));
-        discardCardLabel.setFont (discardCardLabel.getFont ().deriveFont (16.0f));
+        playCardLabel.setFont(playCardLabel.getFont().deriveFont(16.0f));
+        discardCardLabel.setFont(discardCardLabel.getFont().deriveFont(16.0f));
         controlPanel.add(playCardLabel, "play");
         controlPanel.add(discardCardLabel, "discard");
         controlPanel.add(new ControlPanel(SelectedSymbol.getSelectedSymbol()), "hint");

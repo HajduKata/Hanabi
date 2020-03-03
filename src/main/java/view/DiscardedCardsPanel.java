@@ -26,6 +26,7 @@ public class DiscardedCardsPanel extends JPanel {
         setPreferredSize(CARD_COLORS_DIMENSION);
         setMinimumSize(CARD_COLORS_DIMENSION);
         Border border = new BorderUIResource.TitledBorderUIResource(DISCARDED_CARDS_TITLE);
+        ((BorderUIResource.TitledBorderUIResource) border).setTitleColor(Color.WHITE);
         setBorder(border);
     }
 

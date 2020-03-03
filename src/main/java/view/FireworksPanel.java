@@ -32,6 +32,7 @@ public class FireworksPanel extends JPanel {
         setPreferredSize(GameTable.CARD_COLORS_DIMENSION);
         setMaximumSize(GameTable.CARD_COLORS_DIMENSION);
         Border border = new BorderUIResource.TitledBorderUIResource(FIREWORKS);
+        ((BorderUIResource.TitledBorderUIResource) border).setTitleColor(Color.WHITE);
         setBorder(border);
     }
 
