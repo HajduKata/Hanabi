@@ -7,46 +7,109 @@ import model.Player;
 import model.Players;
 import model.SelectedSymbol;
 
-import javax.swing.Icon;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.plaf.BorderUIResource;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.net.URL;
-import java.util.Objects;
 
-import static view.GameTable.RIGHT_PANEL_DIMENSION;
+import static view.GameTable.BUTTON_HEIGHT;
+import static view.GameTable.CONTROL_PANEL_HEIGHT;
+import static view.GameTable.RIGHT_PANEL_WIDTH;
 import static view.HanabiUtilities.COLOR_OFFSET_X;
 import static view.HanabiUtilities.NUMBER_OFFSET_Y;
 import static view.HanabiUtilities.SYMBOL_SIZE_X;
 import static view.HanabiUtilities.SYMBOL_SIZE_Y;
-import static view.HanabiUtilities.classLoader;
 
 public class ControlPanel extends JPanel {
-    private static final String SYMBOLS_TITLE = "Select Color or Number";
     private static final Color BG_COLOR = Color.decode("#003366");
+    public boolean isPlayACard = false;
+    public boolean isDiscardACard = false;
 
     private SelectedSymbol selectedSymbol;
-    private PlayerPanel playerPanel;
 
+    public ControlPanel() {
+        // Control buttons
+        JPanel controlButtonsContainer = new JPanel();
+        controlButtonsContainer.setLayout(new BoxLayout(controlButtonsContainer, BoxLayout.Y_AXIS));
+        controlButtonsContainer.setAlignmentX(CENTER_ALIGNMENT);
+        controlButtonsContainer.setAlignmentY(TOP_ALIGNMENT);
+        JButton playCardButton = new JButton("Play a card");
+        JButton discardCardButton = new JButton("Discard a card");
+        JButton giveHintButton = new JButton("Give a hint");
+        playCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
+        discardCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
+        giveHintButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
+        controlButtonsContainer.add(playCardButton);
+        controlButtonsContainer.add(Box.createVerticalStrut(10));
+        controlButtonsContainer.add(discardCardButton);
+        controlButtonsContainer.add(Box.createVerticalStrut(10));
+        controlButtonsContainer.add(giveHintButton);
+        controlButtonsContainer.add(Box.createVerticalStrut(10));
 
-    public ControlPanel(SelectedSymbol selectedSymbol) {
+        CardLayout cardLayout = new CardLayout(5,5);
+        JPanel extensionPanel = new JPanel(cardLayout);
+        Border border = new BorderUIResource.LineBorderUIResource(Color.BLACK);
+        extensionPanel.setBorder(border);
+        extensionPanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, CONTROL_PANEL_HEIGHT));
+
+        JLabel playCardLabel = new JLabel("Select a card to play from your hand");
+        JLabel discardCardLabel = new JLabel("Select a card to discard from your hand");
+        playCardLabel.setFont(playCardLabel.getFont().deriveFont(16.0f));
+        discardCardLabel.setFont(discardCardLabel.getFont().deriveFont(16.0f));
+        extensionPanel.add(playCardLabel, "play");
+        extensionPanel.add(discardCardLabel, "discard");
+        extensionPanel.add(setSelectedHint(SelectedSymbol.getSelectedSymbol()), "hint");
+
+        this.add(controlButtonsContainer);
+        this.add(extensionPanel);
+
+        playCardButton.addActionListener(e -> setPlayACard(cardLayout, extensionPanel));
+        discardCardButton.addActionListener(e -> setDiscardACard(cardLayout, extensionPanel));
+        giveHintButton.addActionListener(e -> showHintButtons(cardLayout, extensionPanel));
+    }
+
+    private void setPlayACard(CardLayout cardLayout, JPanel extensionPanel) {
+        isPlayACard = true;
+        isDiscardACard = false;
+        resetAllCards();
+        cardLayout.show(extensionPanel, "play");
+    }
+
+    private void setDiscardACard(CardLayout cardLayout, JPanel extensionPanel) {
+        isDiscardACard = true;
+        isPlayACard = false;
+        resetAllCards();
+        cardLayout.show(extensionPanel, "discard");
+    }
+
+    private void showHintButtons(CardLayout cardLayout, JPanel extensionPanel) {
+        isDiscardACard = false;
+        isPlayACard = false;
+        cardLayout.show(extensionPanel, "hint");
+    }
+
+    private JPanel setSelectedHint(SelectedSymbol selectedSymbol) {
         this.selectedSymbol = selectedSymbol;
-        this.playerPanel = playerPanel;
-        HintSymbols hintSymbols = new HintSymbols();
+        JPanel hintPanel = new JPanel();
+        hintPanel.setLayout(new BoxLayout(hintPanel, BoxLayout.Y_AXIS));
+
+        JPanel colorPanel = new JPanel();
+        colorPanel.setBackground(BG_COLOR);
 
         int x = 5;
         int y = 20;
         for (CardColor color : CardColor.values()) {
-            String actualColor = color.name().toLowerCase();
             assert HintSymbols.getImageByColor(color) != null;
-            JButton colorButton = new JButton(new ImageIcon(HintSymbols.getImageByColor(color)));
-            colorButton.setBounds(x,y, SYMBOL_SIZE_X, SYMBOL_SIZE_Y);
+            JButton colorButton = new JButton(new ImageIcon(new HintSymbols().getImageByColor(color)));
+            colorButton.setBounds(x, y, SYMBOL_SIZE_X, SYMBOL_SIZE_Y);
             colorButton.setPreferredSize(new Dimension(SYMBOL_SIZE_X, SYMBOL_SIZE_Y));
             this.add(colorButton);
             colorButton.addActionListener(e -> {
@@ -54,16 +117,20 @@ public class ControlPanel extends JPanel {
                 SelectedSymbol.setSelectedColor(color);
                 highlightCard();
             });
+            colorPanel.add(colorButton);
             x += SYMBOL_SIZE_X + COLOR_OFFSET_X;
         }
+
+        JPanel numberPanel = new JPanel();
+        numberPanel.setBackground(BG_COLOR);
+
         x = 5;
         y = 20 + SYMBOL_SIZE_Y + NUMBER_OFFSET_Y;
         for (CardNumber number : CardNumber.values()) {
             if (number != CardNumber.ZERO) {
-                String actualNumber = number.getValue();
                 assert HintSymbols.getImageByNumber(number) != null;
-                JButton numberButton = new JButton(new ImageIcon(HintSymbols.getImageByNumber(number)));
-                numberButton.setBounds(x,y, SYMBOL_SIZE_X, SYMBOL_SIZE_Y);
+                JButton numberButton = new JButton(new ImageIcon(new HintSymbols().getImageByNumber(number)));
+                numberButton.setBounds(x, y, SYMBOL_SIZE_X, SYMBOL_SIZE_Y);
                 numberButton.setPreferredSize(new Dimension(SYMBOL_SIZE_X, SYMBOL_SIZE_Y));
                 this.add(numberButton);
                 numberButton.addActionListener(e -> {
@@ -71,9 +138,13 @@ public class ControlPanel extends JPanel {
                     SelectedSymbol.setSelectedNumber(number);
                     highlightCard();
                 });
+                numberPanel.add(numberButton);
                 x += SYMBOL_SIZE_X + COLOR_OFFSET_X;
             }
         }
+        hintPanel.add(colorPanel);
+        hintPanel.add(numberPanel);
+        return hintPanel;
     }
 
     private void highlightCard() {
@@ -93,14 +164,23 @@ public class ControlPanel extends JPanel {
         }
     }
 
+    private void resetAllCards() {
+        for (Player player : Players.getThePlayers()) {
+            if (!player.isHumanPlayer()) {
+                for (Card card : player.getHand().cards) {
+                    card.reset();
+                }
+            }
+            player.getPlayerPanel().repaint();
+        }
+        SelectedSymbol.clearSelection();
+    }
+
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(BG_COLOR);
-        Border border = new BorderUIResource.TitledBorderUIResource(SYMBOLS_TITLE);
-        setBorder(border);
-
+//        setBackground(BG_COLOR);
         paintSymbols(g);
     }
 

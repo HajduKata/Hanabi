@@ -23,9 +23,9 @@ public class Player {
         this.humanPlayer = humanPlayer;
         // Generate name
         if (humanPlayer) {
-            this.name = "You";
+            this.name = "Te";
         } else {
-            this.name = "AI Player" + index;
+            this.name = "AI Játékos " + index;
             index++;
         }
 

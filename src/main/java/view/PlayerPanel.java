@@ -30,10 +30,12 @@ public class PlayerPanel extends JPanel implements MouseListener {
 
     private final Player player;
     private final Tokens tokens;
+    private final ControlPanel controlPanel;
 
-    PlayerPanel(Player player, Tokens tokens) {
+    PlayerPanel(Player player, Tokens tokens, ControlPanel controlPanel) {
         this.player = player;
         this.tokens = tokens;
+        this.controlPanel = controlPanel;
 
         setPreferredSize(LEFT_PANEL_DIMENSION);
         setBackground(BG_COLOR);
@@ -96,6 +98,14 @@ public class PlayerPanel extends JPanel implements MouseListener {
      */
     @Override
     public void mouseClicked(MouseEvent mouseE) {
+        if (controlPanel.isPlayACard) {
+            //TODO call card selector method and handle add to fireworks (life handling)
+        }
+
+        if (controlPanel.isDiscardACard) {
+            //TODO call card selector method and handle add to discarded cards (clue handling)
+        }
+
         // If there is no symbol selected
         if (SelectedSymbol.getSelectedColor() == null && SelectedSymbol.getSelectedNumber() == null) {
             return;
@@ -113,12 +123,12 @@ public class PlayerPanel extends JPanel implements MouseListener {
         SelectedSymbol.clearSelection();
         tokens.decreaseClues();
 
-        // TODO this only resets the actual player's cards, not all other players
         List<Player> players = Players.getThePlayers();
         for (Player player : players) {
             for (Card card : player.getHand().cards) {
                 card.reset();
             }
+            player.getPlayerPanel().repaint();
         }
     }
 
