@@ -25,7 +25,7 @@ public class Player {
         if (humanPlayer) {
             this.name = "Te";
         } else {
-            this.name = "AI Játékos " + index;
+            this.name = "Gépi Játékos " + index;
             index++;
         }
 

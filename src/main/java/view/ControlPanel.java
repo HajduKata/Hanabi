@@ -6,6 +6,7 @@ import model.CardNumber;
 import model.Player;
 import model.Players;
 import model.SelectedSymbol;
+import model.Tokens;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,6 +19,7 @@ import javax.swing.plaf.BorderUIResource;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 
 import static view.GameTable.BUTTON_HEIGHT;
@@ -34,6 +36,8 @@ public class ControlPanel extends JPanel {
     public boolean isDiscardACard = false;
 
     private SelectedSymbol selectedSymbol;
+    CardLayout cardLayout;
+    JPanel extensionPanel;
 
     public ControlPanel() {
         // Control buttons
@@ -54,16 +58,19 @@ public class ControlPanel extends JPanel {
         controlButtonsContainer.add(giveHintButton);
         controlButtonsContainer.add(Box.createVerticalStrut(10));
 
-        CardLayout cardLayout = new CardLayout(5,5);
-        JPanel extensionPanel = new JPanel(cardLayout);
+        cardLayout = new CardLayout(5, 5);
+        extensionPanel = new JPanel(cardLayout);
         Border border = new BorderUIResource.LineBorderUIResource(Color.BLACK);
         extensionPanel.setBorder(border);
         extensionPanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, CONTROL_PANEL_HEIGHT));
 
+        JLabel defaultLabel = new JLabel("Select an action");
+        defaultLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         JLabel playCardLabel = new JLabel("Select a card to play from your hand");
+        playCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         JLabel discardCardLabel = new JLabel("Select a card to discard from your hand");
-        playCardLabel.setFont(playCardLabel.getFont().deriveFont(16.0f));
-        discardCardLabel.setFont(discardCardLabel.getFont().deriveFont(16.0f));
+        discardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        extensionPanel.add(defaultLabel, "default");
         extensionPanel.add(playCardLabel, "play");
         extensionPanel.add(discardCardLabel, "discard");
         extensionPanel.add(setSelectedHint(SelectedSymbol.getSelectedSymbol()), "hint");
@@ -74,6 +81,10 @@ public class ControlPanel extends JPanel {
         playCardButton.addActionListener(e -> setPlayACard(cardLayout, extensionPanel));
         discardCardButton.addActionListener(e -> setDiscardACard(cardLayout, extensionPanel));
         giveHintButton.addActionListener(e -> showHintButtons(cardLayout, extensionPanel));
+    }
+
+    void showDefaultWindow() {
+        cardLayout.show(extensionPanel, "default");
     }
 
     private void setPlayACard(CardLayout cardLayout, JPanel extensionPanel) {
@@ -93,7 +104,11 @@ public class ControlPanel extends JPanel {
     private void showHintButtons(CardLayout cardLayout, JPanel extensionPanel) {
         isDiscardACard = false;
         isPlayACard = false;
-        cardLayout.show(extensionPanel, "hint");
+        if(Tokens.getTokens().getClues() > 0) {
+            cardLayout.show(extensionPanel, "hint");
+        } else {
+            showDefaultWindow();
+        }
     }
 
     private JPanel setSelectedHint(SelectedSymbol selectedSymbol) {

@@ -2,12 +2,15 @@ package view;
 
 import model.Card;
 import model.CardColor;
+import model.DiscardedCards;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.plaf.BorderUIResource;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -17,15 +20,16 @@ public class DiscardedCardsPanel extends JPanel {
     private static final String DISCARDED_CARDS_TITLE = "Discarded cards";
     private static final Color BG_COLOR = Color.decode("#003366");
 
-    private SortedMap<CardColor, Set<Card>> discardedCards;
+    private DiscardedCards discardedCards;
 
-    public DiscardedCardsPanel(SortedMap<CardColor, Set<Card>> discardedCards) {
+    public DiscardedCardsPanel(DiscardedCards discardedCards) {
         this.discardedCards = discardedCards;
 
         setBackground(BG_COLOR);
         setPreferredSize(CARD_COLORS_DIMENSION);
         setMinimumSize(CARD_COLORS_DIMENSION);
         Border border = new BorderUIResource.TitledBorderUIResource(DISCARDED_CARDS_TITLE);
+        ((BorderUIResource.TitledBorderUIResource) border).setTitleFont(new Font("SansSerif", Font.PLAIN, 14));
         ((BorderUIResource.TitledBorderUIResource) border).setTitleColor(Color.WHITE);
         setBorder(border);
     }
@@ -33,20 +37,20 @@ public class DiscardedCardsPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        paintDropedCards(g);
+        paintDiscardedCards(g);
     }
 
-    private void paintDropedCards(Graphics g) {
+    private void paintDiscardedCards(Graphics g) {
         int x = 5;
-        int y = 20;
-        for (CardColor color : discardedCards.keySet()) {
-            Card testCard = new Card(color);
-            if (discardedCards.get(color).contains(testCard)) {
+        SortedMap<CardColor, List<Card>> discard = discardedCards.getCards();
+        for (CardColor color : discard.keySet()) {
+            int y = 20;
+            Card emptyCard = new Card(color);
+            if (discard.get(color).get(0).equals(emptyCard)) {
                 g.setColor(color.getPaintColor(color));
                 g.drawRect(x, y, Card.CARD_SIZE_X, Card.CARD_SIZE_Y);
             } else {
-                for (Card card : discardedCards.get(color)) {
+                for (Card card : discard.get(color)) {
                     g.drawImage(card.image, x, y, Card.CARD_SIZE_X, Card.CARD_SIZE_Y, this);
                     y += Card.CARD_OFFSET_Y;
                 }

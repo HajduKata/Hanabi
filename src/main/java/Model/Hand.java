@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hand {
-    static final int NUM_OF_CARDS_IN_HAND;
+    public static final int NUM_OF_CARDS_IN_HAND;
     public List<Card> cards;
 
     static {

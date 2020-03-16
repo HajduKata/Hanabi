@@ -2,6 +2,7 @@ package view;
 
 import model.Card;
 import model.CardColor;
+import model.DiscardedCards;
 import model.Fireworks;
 import model.Player;
 import model.Players;
@@ -73,40 +74,26 @@ public class GameTable extends JFrame {
     private void initTable() {
         // Initialization with 8 clues and 3 lives
         Tokens tokens = Tokens.getTokens();
-        // Initializing Control Panel
-        ControlPanel controlPanel = new ControlPanel();
 
-        // Player cards panels
-        JPanel playersContainer = new JPanel();
-        playersContainer.setPreferredSize(LEFT_PANEL_DIMENSION);
-        playersContainer.setLayout(new BoxLayout(playersContainer, BoxLayout.Y_AXIS));
-        playersContainer.setAlignmentX(LEFT_ALIGNMENT);
-        playersContainer.setAlignmentY(TOP_ALIGNMENT);
-        for (Player player : Players.getThePlayers()) {
-            PlayerPanel playerPanel = new PlayerPanel(player, tokens, controlPanel);
-            playerPanel.addMouseListener(playerPanel);
-            player.setPlayerPanel(playerPanel);
-            playersContainer.add(playerPanel);
-        }
-
-        // Fireworks and Discarded card panels
+        // Fireworks and Discarded cards panels
         JPanel placedCardsContainer = new JPanel();
         placedCardsContainer.setPreferredSize(MID_PANEL_DIMENSION);
         placedCardsContainer.setLayout(new BoxLayout(placedCardsContainer, BoxLayout.Y_AXIS));
         placedCardsContainer.setAlignmentX(LEFT_ALIGNMENT);
         placedCardsContainer.setAlignmentY(TOP_ALIGNMENT);
-        // Add empty fireworks
-        placedCardsContainer.add(new FireworksPanel(Fireworks.getFireworks()));
-        // Create empty dropped cards
-        SortedMap<CardColor, Set<Card>> discardedCards = new TreeMap<>();
-        Set<Card> emptyCard = new TreeSet<>();
-        for (CardColor color : CardColor.values()) {
-            emptyCard.add(new Card(color));
-            discardedCards.put(color, emptyCard);
-        }
-        // Add empty dropped cards
-        placedCardsContainer.add(new DiscardedCardsPanel(discardedCards));
+        // Initializing fireworks panel
+        FireworksPanel fireworksPanel = new FireworksPanel(Fireworks.getFireworks());
+        // Add empty fireworks to container
+        placedCardsContainer.add(fireworksPanel);
+        // Create empty discard piles
+        DiscardedCards discard = DiscardedCards.getDiscard();
+        // Initializing discarded cards panel
+        DiscardedCardsPanel discardedCardsPanel = new DiscardedCardsPanel(discard);
+        // Add empty dropped cards to container
+        placedCardsContainer.add(discardedCardsPanel);
 
+        // Initializing Control Panel
+        ControlPanel controlPanel = new ControlPanel();
         // Control panel and information panel
         JPanel controlContainer = new JPanel();
         controlContainer.setPreferredSize(RIGHT_PANEL_DIMENSION);
@@ -121,8 +108,22 @@ public class GameTable extends JFrame {
         cluePanel.setAlignmentX(CENTER_ALIGNMENT);
         cluePanel.setAlignmentY(TOP_ALIGNMENT);
 
+        // Add CluePanel (life + clues) and controlPanel to container
         controlContainer.add(cluePanel);
         controlContainer.add(controlPanel);
+
+        // Player cards panels
+        JPanel playersContainer = new JPanel();
+        playersContainer.setPreferredSize(LEFT_PANEL_DIMENSION);
+        playersContainer.setLayout(new BoxLayout(playersContainer, BoxLayout.Y_AXIS));
+        playersContainer.setAlignmentX(LEFT_ALIGNMENT);
+        playersContainer.setAlignmentY(TOP_ALIGNMENT);
+        for (Player player : Players.getThePlayers()) {
+            PlayerPanel playerPanel = new PlayerPanel(player, tokens, controlPanel, fireworksPanel, discardedCardsPanel);
+            playerPanel.addMouseListener(playerPanel);
+            player.setPlayerPanel(playerPanel);
+            playersContainer.add(playerPanel);
+        }
 
         // Add containers to the card table
         setLayout(new FlowLayout(FlowLayout.LEADING));

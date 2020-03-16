@@ -43,23 +43,24 @@ public class Fireworks {
     }
 
     /**
-     * Check wheter the given card can be added to a firework and add it (the array holds the last card)
+     * Check whether the given card can be added to a firework and add it (the array holds the last card)
      *
      * @param card the card to add
      * @return true if it is a legal play (can be added)
      */
-    public boolean addCard(Card card) {
+    public boolean addFireworkCard(Card card) {
         assert card != null;
         int index = card.getColor().ordinal();
 
-        if (fireworks[index] == null && card.getNumber() == CardNumber.ONE) {
-            fireworks[index] = card;
+        if (fireworks[index].getNumber() == CardNumber.ZERO && card.getNumber() == CardNumber.ONE) {
+                fireworks[index] = card;
             return true;
-        } else {
-            if (fireworks[index] != null && fireworks[index].getNumber().next() == card.getNumber()) {
-                fireworks[index + 1] = card;
-                return true;
+        } else if (fireworks[index].getNumber().next() == card.getNumber()) {
+            fireworks[index] = card;
+            if(card.getNumber().equals(CardNumber.FIVE)) {
+                Tokens.getTokens().increaseClues();
             }
+            return true;
         }
         return false;
     }
