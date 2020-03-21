@@ -11,19 +11,21 @@ import java.awt.Graphics;
 import static view.GameTable.RIGHT_PANEL_WIDTH;
 
 public class CluePanel extends JPanel {
-    Tokens tokens;
-    JLabel lifeLabel;
-    JLabel clueLabel;
+    private Tokens tokens;
+    private JLabel lifeLabel;
+    private JLabel clueLabel;
+    private String lifeString = "Életek: ";
+    private String tokenString = "Utalásjelzők: ";
 
-    public CluePanel(Tokens tokens) {
+    CluePanel(Tokens tokens) {
         this.tokens = tokens;
-        lifeLabel = new JLabel("Life : " + tokens.getLife());
+        lifeLabel = new JLabel(lifeString + tokens.getLife());
         lifeLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
-        clueLabel = new JLabel("Tokens: " + tokens.getClues());
+        clueLabel = new JLabel(tokenString + tokens.getClues());
         clueLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
-        lifeLabel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 25));
+        lifeLabel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 30));
         lifeLabel.setHorizontalAlignment(JLabel.CENTER);
-        clueLabel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 25));
+        clueLabel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 30));
         clueLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(lifeLabel);
         this.add(clueLabel);
@@ -36,8 +38,8 @@ public class CluePanel extends JPanel {
     }
 
     private void paintAllClues(Tokens tokens) {
-        lifeLabel.setText("Life : " + tokens.getLife());
-        clueLabel.setText("Tokens: " + tokens.getClues());
+        lifeLabel.setText(lifeString + tokens.getLife());
+        clueLabel.setText(tokenString + tokens.getClues());
         this.repaint();
     }
 }

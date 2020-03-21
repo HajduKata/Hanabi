@@ -1,9 +1,8 @@
 package view;
 
-import model.Card;
-import model.CardColor;
 import model.DiscardedCards;
 import model.Fireworks;
+import model.History;
 import model.Player;
 import model.Players;
 import model.Tokens;
@@ -14,10 +13,6 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import static model.Card.CARD_OFFSET_X;
 import static model.Card.CARD_SIZE_X;
@@ -41,15 +36,15 @@ public class GameTable extends JFrame {
     private static final int LEFT_PANEL_WIDTH = CARD_SIZE_X + 5 * CARD_OFFSET_X + BORDER_SIZE;
     private static final int MID_PANEL_WIDTH = 5 * CARD_SIZE_X + 4 * GAP + BORDER_SIZE;
     public static final int RIGHT_PANEL_WIDTH = (numberOfColors + 1) * SYMBOL_SIZE_X + numberOfColors * GAP + BORDER_SIZE;
-    public static final int CONTROL_PANEL_HEIGHT = 150;
+    static final int CONTROL_PANEL_HEIGHT = 150;
 
     private static final Dimension MIN_TABLE_DIMENSION = new Dimension(TABLE_SIZE_WIDTH, TABLE_SIZE_HEIGHT);
-    public static final Dimension LEFT_PANEL_DIMENSION = new Dimension(LEFT_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
+    static final Dimension LEFT_PANEL_DIMENSION = new Dimension(LEFT_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
     private static final Dimension MID_PANEL_DIMENSION = new Dimension(MID_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
-    public static final Dimension RIGHT_PANEL_DIMENSION = new Dimension(RIGHT_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
-    public static final Dimension CARD_COLORS_DIMENSION =
+    private static final Dimension RIGHT_PANEL_DIMENSION = new Dimension(RIGHT_PANEL_WIDTH, TABLE_SIZE_HEIGHT);
+    static final Dimension CARD_COLORS_DIMENSION =
             new Dimension(numberOfColors * CARD_SIZE_X + (numberOfColors - 1) * GAP + BORDER_SIZE, CARD_SIZE_Y + 4 * BORDER_SIZE);
-    public static final int BUTTON_HEIGHT = 25;
+    static final int BUTTON_HEIGHT = 25;
 
     private final boolean fullscreen = true; // TODO from properties
 
@@ -89,11 +84,13 @@ public class GameTable extends JFrame {
         DiscardedCards discard = DiscardedCards.getDiscard();
         // Initializing discarded cards panel
         DiscardedCardsPanel discardedCardsPanel = new DiscardedCardsPanel(discard);
-        // Add empty dropped cards to container
+        // Add empty discarded cards to container
         placedCardsContainer.add(discardedCardsPanel);
 
+        // Initializing History
+        History history = History.getHistory();
         // Initializing Control Panel
-        ControlPanel controlPanel = new ControlPanel();
+        ControlPanel controlPanel = new ControlPanel(history);
         // Control panel and information panel
         JPanel controlContainer = new JPanel();
         controlContainer.setPreferredSize(RIGHT_PANEL_DIMENSION);
@@ -112,6 +109,7 @@ public class GameTable extends JFrame {
         controlContainer.add(cluePanel);
         controlContainer.add(controlPanel);
 
+
         // Player cards panels
         JPanel playersContainer = new JPanel();
         playersContainer.setPreferredSize(LEFT_PANEL_DIMENSION);
@@ -119,8 +117,9 @@ public class GameTable extends JFrame {
         playersContainer.setAlignmentX(LEFT_ALIGNMENT);
         playersContainer.setAlignmentY(TOP_ALIGNMENT);
         for (Player player : Players.getThePlayers()) {
-            PlayerPanel playerPanel = new PlayerPanel(player, tokens, controlPanel, fireworksPanel, discardedCardsPanel);
+            PlayerPanel playerPanel = new PlayerPanel(player, tokens, controlPanel, fireworksPanel, discardedCardsPanel, history);
             playerPanel.addMouseListener(playerPanel);
+            playerPanel.addMouseMotionListener(playerPanel);
             player.setPlayerPanel(playerPanel);
             playersContainer.add(playerPanel);
         }

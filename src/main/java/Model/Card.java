@@ -15,7 +15,7 @@ public class Card implements Comparable<Card> {
     public static final int CARD_SIZE_X = 130;
     public static final int CARD_SIZE_Y = 130;
     public static final int CARD_OFFSET_X = 60;
-    public static final int CARD_OFFSET_Y = 10;
+    public static final int CARD_OFFSET_Y = 20;
 
     public static int numberOfColors = 5; // TODO get from settings
     // UI fields
@@ -25,9 +25,9 @@ public class Card implements Comparable<Card> {
     // Card model fields
     private CardColor cardColor;
     private CardNumber cardNumber;
-    private boolean selected = false;
-    public boolean knownColor = false;
-    public boolean knownNumber = false;
+    private boolean selected;
+    public boolean knownColor;
+    public boolean knownNumber;
 
 
     /**
@@ -38,6 +38,9 @@ public class Card implements Comparable<Card> {
     public Card(CardColor cardColor) {
         this.cardColor = cardColor;
         this.cardNumber = CardNumber.ZERO;
+        this.knownColor = false;
+        this.knownNumber = false;
+        this.selected = false;
     }
 
     /**
@@ -49,6 +52,9 @@ public class Card implements Comparable<Card> {
     public Card(CardColor cardColor, CardNumber cardNumber) {
         this.cardColor = cardColor;
         this.cardNumber = cardNumber;
+        this.knownColor = false;
+        this.knownNumber = false;
+        this.selected = false;
 
         String cardFilename = cardColor.getValue() + cardNumber.getValue();
         URL imageURL = Objects.requireNonNull(classLoader.getResource("hanabi_cards/" + cardFilename + ".png"));
@@ -79,7 +85,7 @@ public class Card implements Comparable<Card> {
         return x;
     }
 
-    public void setX(int x) {
+    void setX(int x) {
         this.x = x;
     }
 
@@ -87,7 +93,7 @@ public class Card implements Comparable<Card> {
         return y;
     }
 
-    public void setY(int y) {
+    void setY(int y) {
         this.y = y;
     }
 
@@ -98,4 +104,15 @@ public class Card implements Comparable<Card> {
         int otherHash = other.getColor().ordinal() * 10 + other.getNumber().ordinal();
         return selfHash - otherHash;
     }
+
+    @Override
+    public boolean equals(Object card) {
+        if (!(card instanceof Card)) {
+            return false;
+        }
+        Card thisCard = this;
+        Card otherCard = (Card) card;
+        return (thisCard.getColor().equals(otherCard.getColor()) && thisCard.getNumber().equals(otherCard.getNumber()));
+    }
 }
+

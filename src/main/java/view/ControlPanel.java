@@ -3,6 +3,7 @@ package view;
 import model.Card;
 import model.CardColor;
 import model.CardNumber;
+import model.History;
 import model.Player;
 import model.Players;
 import model.SelectedSymbol;
@@ -18,6 +19,7 @@ import javax.swing.border.Border;
 import javax.swing.plaf.BorderUIResource;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -32,22 +34,25 @@ import static view.HanabiUtilities.SYMBOL_SIZE_Y;
 
 public class ControlPanel extends JPanel {
     private static final Color BG_COLOR = Color.decode("#003366");
-    public boolean isPlayACard = false;
-    public boolean isDiscardACard = false;
+    boolean isPlayACard = false;
+    boolean isDiscardACard = false;
 
     private SelectedSymbol selectedSymbol;
-    CardLayout cardLayout;
-    JPanel extensionPanel;
+    private CardLayout cardLayout;
+    private JPanel extensionPanel;
+    private JPanel historyPanel;
+    private History history;
 
-    public ControlPanel() {
+    public ControlPanel(History history) {
+        this.history = history;
         // Control buttons
         JPanel controlButtonsContainer = new JPanel();
         controlButtonsContainer.setLayout(new BoxLayout(controlButtonsContainer, BoxLayout.Y_AXIS));
         controlButtonsContainer.setAlignmentX(CENTER_ALIGNMENT);
         controlButtonsContainer.setAlignmentY(TOP_ALIGNMENT);
-        JButton playCardButton = new JButton("Play a card");
-        JButton discardCardButton = new JButton("Discard a card");
-        JButton giveHintButton = new JButton("Give a hint");
+        JButton playCardButton = new JButton("Kártya kijátszása");
+        JButton discardCardButton = new JButton("Kártya eldobása");
+        JButton giveHintButton = new JButton("Utalás adása");
         playCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
         discardCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
         giveHintButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
@@ -62,13 +67,13 @@ public class ControlPanel extends JPanel {
         extensionPanel = new JPanel(cardLayout);
         Border border = new BorderUIResource.LineBorderUIResource(Color.BLACK);
         extensionPanel.setBorder(border);
-        extensionPanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, CONTROL_PANEL_HEIGHT));
+        extensionPanel.setPreferredSize(new Dimension(RIGHT_PANEL_WIDTH, CONTROL_PANEL_HEIGHT));
 
-        JLabel defaultLabel = new JLabel("Select an action");
+        JLabel defaultLabel = new JLabel("Válassz egy akciót");
         defaultLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JLabel playCardLabel = new JLabel("Select a card to play from your hand");
+        JLabel playCardLabel = new JLabel("Játssz ki a kezedből egy lapot");
         playCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JLabel discardCardLabel = new JLabel("Select a card to discard from your hand");
+        JLabel discardCardLabel = new JLabel("Dobj el a kezedből egy lapot");
         discardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         extensionPanel.add(defaultLabel, "default");
         extensionPanel.add(playCardLabel, "play");
@@ -81,6 +86,12 @@ public class ControlPanel extends JPanel {
         playCardButton.addActionListener(e -> setPlayACard(cardLayout, extensionPanel));
         discardCardButton.addActionListener(e -> setDiscardACard(cardLayout, extensionPanel));
         giveHintButton.addActionListener(e -> showHintButtons(cardLayout, extensionPanel));
+
+        //TODO görgő oldalra?
+        historyPanel = new JPanel();
+        historyPanel.setBorder(border);
+        historyPanel.setPreferredSize(new Dimension(RIGHT_PANEL_WIDTH, 461));
+        this.add(historyPanel);
     }
 
     void showDefaultWindow() {
@@ -104,7 +115,7 @@ public class ControlPanel extends JPanel {
     private void showHintButtons(CardLayout cardLayout, JPanel extensionPanel) {
         isDiscardACard = false;
         isPlayACard = false;
-        if(Tokens.getTokens().getClues() > 0) {
+        if (Tokens.getTokens().getClues() > 0) {
             cardLayout.show(extensionPanel, "hint");
         } else {
             showDefaultWindow();
@@ -157,6 +168,10 @@ public class ControlPanel extends JPanel {
                 x += SYMBOL_SIZE_X + COLOR_OFFSET_X;
             }
         }
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setPreferredSize(new Dimension(0, 3));
+        emptyPanel.setBackground(BG_COLOR);
+        hintPanel.add(emptyPanel);
         hintPanel.add(colorPanel);
         hintPanel.add(numberPanel);
         return hintPanel;
@@ -196,9 +211,14 @@ public class ControlPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 //        setBackground(BG_COLOR);
-        paintSymbols(g);
+        paintHistory(g);
     }
 
-    private void paintSymbols(Graphics g) {
+    private void paintHistory(Graphics g) {
+        historyPanel.removeAll();
+        for (Object label : history.getHistoryList()) {
+            historyPanel.add((JLabel) label);
+        }
     }
+
 }

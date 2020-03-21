@@ -31,11 +31,9 @@ public class Player {
 
         for (int i = 0; i < Hand.NUM_OF_CARDS_IN_HAND; i++) {
             // Deal cards
-            Card card = ofNullable(HanabiCards.DECK.pop()).orElseThrow(IllegalArgumentException::new);
+            Card card = HanabiCards.DECK.pop();
             card.setX(CARD_START_POS_X + i * CARD_OFFSET_X);
             card.setY(CARD_START_POS_Y);
-            card.knownColor = false;
-            card.knownNumber = false;
             hand.add(card);
         }
     }

@@ -5,32 +5,29 @@ import model.CardColor;
 import model.DiscardedCards;
 
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.plaf.BorderUIResource;
+import javax.swing.plaf.BorderUIResource.TitledBorderUIResource;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedMap;
 
 import static view.GameTable.CARD_COLORS_DIMENSION;
 
 public class DiscardedCardsPanel extends JPanel {
-    private static final String DISCARDED_CARDS_TITLE = "Discarded cards";
+    private static final String DISCARDED_CARDS_TITLE = "Eldobott lapok";
     private static final Color BG_COLOR = Color.decode("#003366");
 
     private DiscardedCards discardedCards;
 
     public DiscardedCardsPanel(DiscardedCards discardedCards) {
         this.discardedCards = discardedCards;
-
         setBackground(BG_COLOR);
         setPreferredSize(CARD_COLORS_DIMENSION);
         setMinimumSize(CARD_COLORS_DIMENSION);
-        Border border = new BorderUIResource.TitledBorderUIResource(DISCARDED_CARDS_TITLE);
-        ((BorderUIResource.TitledBorderUIResource) border).setTitleFont(new Font("SansSerif", Font.PLAIN, 14));
-        ((BorderUIResource.TitledBorderUIResource) border).setTitleColor(Color.WHITE);
+        TitledBorderUIResource border = new TitledBorderUIResource(DISCARDED_CARDS_TITLE);
+        border.setTitleFont(new Font("SansSerif", Font.PLAIN, 14));
+        border.setTitleColor(Color.WHITE);
         setBorder(border);
     }
 

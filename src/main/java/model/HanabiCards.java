@@ -44,7 +44,7 @@ public enum HanabiCards {
 
     public Card pop() {
         if (cards.isEmpty()) {
-            return null;
+            return new Card(CardColor.RED);
         }
         return cards.remove(0);
     }
