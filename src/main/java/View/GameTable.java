@@ -46,18 +46,16 @@ public class GameTable extends JFrame {
             new Dimension(numberOfColors * CARD_SIZE_X + (numberOfColors - 1) * GAP + BORDER_SIZE, CARD_SIZE_Y + 4 * BORDER_SIZE);
     static final int BUTTON_HEIGHT = 25;
 
-    private final boolean fullscreen = true; // TODO from properties
+    private ControlPanel controlPanel;
 
     public GameTable() {
 
         setTitle("Hanabi");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        if (fullscreen) {
-            setExtendedState(JFrame.MAXIMIZED_BOTH);
-            setUndecorated(false); // hide|show window header
-        } else {
-            setPreferredSize(MIN_TABLE_DIMENSION);
-        }
+
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
+        setUndecorated(false); // hide|show window header
+
 
         initTable();
 
@@ -91,6 +89,7 @@ public class GameTable extends JFrame {
         History history = History.getHistory();
         // Initializing Control Panel
         ControlPanel controlPanel = new ControlPanel(history);
+        this.controlPanel = controlPanel;
         // Control panel and information panel
         JPanel controlContainer = new JPanel();
         controlContainer.setPreferredSize(RIGHT_PANEL_DIMENSION);
@@ -129,5 +128,9 @@ public class GameTable extends JFrame {
         getContentPane().add(playersContainer, BorderLayout.LINE_START);
         getContentPane().add(placedCardsContainer, BorderLayout.CENTER);
         getContentPane().add(controlContainer, BorderLayout.LINE_END);
+    }
+
+    public ControlPanel getControlPanel() {
+        return controlPanel;
     }
 }

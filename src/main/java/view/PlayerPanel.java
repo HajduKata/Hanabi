@@ -164,12 +164,12 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
             for (Card card : this.getPlayer().getHand().cards) {
                 if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedColor() != null) {
                     color = history.getHistoryColor(SelectedSymbol.getSelectedColor());
-                    if(SelectedSymbol.getSelectedColor() == card.getColor()) {
+                    if (SelectedSymbol.getSelectedColor() == card.getColor()) {
                         card.knownColor = true;
                     }
                 } else if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedNumber() != null) {
                     number = history.getHistoryNumber(SelectedSymbol.getSelectedNumber());
-                    if(SelectedSymbol.getSelectedNumber() == card.getNumber()) {
+                    if (SelectedSymbol.getSelectedNumber() == card.getNumber()) {
                         card.knownNumber = true;
                     }
                 }
@@ -188,6 +188,8 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
                 }
                 player.getPlayerPanel().repaint();
             }
+
+            disableButtons();
         }
     }
 
@@ -209,7 +211,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseMoved(MouseEvent mouseE) {
-        //TODO ha a panelből kivisszük az egeret, a kártya selected marad
+        //TODO ha a panelből kivisszük az egeret (5 játékosnál mert ott érintkezik a kártya alja a panel szélével), a kártya selected marad
         int xOfLastCard = CARD_START_POS_X + (NUM_OF_CARDS_IN_HAND - 1) * CARD_OFFSET_X;
         if (this.getPlayer().isHumanPlayer() && (controlPanel.isPlayACard || controlPanel.isDiscardACard)) {
             for (Card card : this.getPlayer().getHand().cards) {
@@ -254,6 +256,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
         controlPanel.showDefaultWindow();
         drawNewCard(this.getPlayer(), card);
         this.repaint();
+        disableButtons();
     }
 
     private void discardACard(Card card) {
@@ -266,10 +269,20 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
         discardedCardsPanel.repaint();
         drawNewCard(this.getPlayer(), card);
         this.repaint();
+        disableButtons();
     }
 
     private static boolean clickContains(int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
         return mouseX > startX && mouseX < endX &&
                 mouseY > startY && mouseY < endY;
+    }
+
+    private void disableButtons() {
+        controlPanel.playCardButton.setEnabled(false);
+        controlPanel.discardCardButton.setEnabled(false);
+        controlPanel.giveHintButton.setEnabled(false);
+        for (Player player : Players.getThePlayers()) {
+            player.setTheirTurn(false);
+        }
     }
 }

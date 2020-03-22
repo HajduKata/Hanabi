@@ -1,9 +1,13 @@
 package controller;
 
+import model.Card;
+import model.CardColor;
+import model.Fireworks;
 import model.HanabiCards;
 import model.Player;
 import model.Players;
 import model.Tokens;
+import view.ControlPanel;
 import view.GameTable;
 import view.SetupWindow;
 
@@ -42,23 +46,40 @@ public class PlayHanabi implements ImageObserver {
     }
 
     public void play() {
+        boolean endOfDeck = false;
         do {
             Player actualPlayer = Players.nextPlayer();
-            if (actualPlayer.isAIPlayer()) {
-                // AI logic comes here
-                JOptionPane.showMessageDialog(null, actualPlayer.getName(), "Actual player", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                // TODO enable/disable mouse listeners
-                Tokens.getTokens().decreaseLife();
-            }
-            gameEnd = Tokens.getTokens().getLife() == 0;
+            actualPlayer.setTheirTurn(true);
+            playerTurn(actualPlayer);
+            endOfDeck = HanabiCards.DECK.endOfDeck();
+            gameEnd = endOfDeck || Tokens.getTokens().getLife() == 0 || Fireworks.getFireworks().allFireworksFinished();
         } while (!gameEnd);
+        if(endOfDeck) {
+            for (int i = 0; i < Players.numberOfPlayers; i++) {
+                Player actualPlayer = Players.nextPlayer();
+                actualPlayer.setTheirTurn(true);
+                playerTurn(actualPlayer);
+            }
+        }
+        //TODO játék végi kiértékelés
     }
 
-    public void setGameEnd(boolean gameEnd) {
-        this.gameEnd = gameEnd;
-    }
+    public void playerTurn(Player actualPlayer) {
+        // AI logic comes here
+        if (actualPlayer.isAIPlayer()) {
+            JOptionPane.showMessageDialog(null, actualPlayer.getName(), "Actual player", JOptionPane.INFORMATION_MESSAGE);
+            actualPlayer.setTheirTurn(false);
+        } else {
+            table.getControlPanel().playCardButton.setEnabled(true);
+            table.getControlPanel().discardCardButton.setEnabled(true);
+            table.getControlPanel().giveHintButton.setEnabled(true);
 
+            while (actualPlayer.isTheirTurn()) {
+                // Wait for player's action
+                // isTheirTurn changes in PlayerPanel, after action has been done
+            }
+        }
+    }
 
     @Override
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {

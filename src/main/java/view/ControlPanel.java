@@ -37,6 +37,9 @@ public class ControlPanel extends JPanel {
     boolean isPlayACard = false;
     boolean isDiscardACard = false;
 
+    public JButton playCardButton;
+    public JButton discardCardButton;
+    public JButton giveHintButton;
     private SelectedSymbol selectedSymbol;
     private CardLayout cardLayout;
     private JPanel extensionPanel;
@@ -50,9 +53,9 @@ public class ControlPanel extends JPanel {
         controlButtonsContainer.setLayout(new BoxLayout(controlButtonsContainer, BoxLayout.Y_AXIS));
         controlButtonsContainer.setAlignmentX(CENTER_ALIGNMENT);
         controlButtonsContainer.setAlignmentY(TOP_ALIGNMENT);
-        JButton playCardButton = new JButton("Kártya kijátszása");
-        JButton discardCardButton = new JButton("Kártya eldobása");
-        JButton giveHintButton = new JButton("Utalás adása");
+        playCardButton = new JButton("Kártya kijátszása");
+        discardCardButton = new JButton("Kártya eldobása");
+        giveHintButton = new JButton("Utalás adása");
         playCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
         discardCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
         giveHintButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
@@ -86,6 +89,10 @@ public class ControlPanel extends JPanel {
         playCardButton.addActionListener(e -> setPlayACard(cardLayout, extensionPanel));
         discardCardButton.addActionListener(e -> setDiscardACard(cardLayout, extensionPanel));
         giveHintButton.addActionListener(e -> showHintButtons(cardLayout, extensionPanel));
+
+        playCardButton.setEnabled(false);
+        discardCardButton.setEnabled(false);
+        giveHintButton.setEnabled(false);
 
         //TODO görgő oldalra?
         historyPanel = new JPanel();

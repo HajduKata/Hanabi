@@ -18,7 +18,7 @@ public class Players {
     private static List<Player> players;
     private static int playerIndex =0;
 
-    static int numberOfPlayers;
+    public static int numberOfPlayers;
 
     public static List<Player> getThePlayers() {
         return players;

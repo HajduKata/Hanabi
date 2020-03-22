@@ -64,4 +64,13 @@ public class Fireworks {
         }
         return false;
     }
+
+    public boolean allFireworksFinished() {
+        for (Card card : fireworks) {
+            if(!card.getNumber().equals(CardNumber.FIVE)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

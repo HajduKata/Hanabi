@@ -2,7 +2,6 @@ package model;
 
 import view.PlayerPanel;
 
-import static java.util.Optional.ofNullable;
 import static model.Card.CARD_OFFSET_X;
 import static view.HanabiUtilities.CARD_START_POS_X;
 import static view.HanabiUtilities.CARD_START_POS_Y;
@@ -17,10 +16,12 @@ public class Player {
     private boolean humanPlayer;
     private boolean firstPlayer;
     private Hand hand;
+    private volatile boolean theirTurn;
 
     Player(boolean humanPlayer) {
         this.hand = new Hand();
         this.humanPlayer = humanPlayer;
+        this.theirTurn = false;
         // Generate name
         if (humanPlayer) {
             this.name = "Te";
@@ -88,5 +89,13 @@ public class Player {
 
     public void setPlayerPanel(PlayerPanel playerPanel) {
         this.playerPanel = playerPanel;
+    }
+
+    public boolean isTheirTurn() {
+        return theirTurn;
+    }
+
+    public void setTheirTurn(boolean theirTurn) {
+        this.theirTurn = theirTurn;
     }
 }
