@@ -41,19 +41,15 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
     private static final Color BG_COLOR = Color.decode("#003366");
 
     private final Player player;
-    private final Tokens tokens;
     private final ControlPanel controlPanel;
     private final FireworksPanel fireworksPanel;
     private final DiscardedCardsPanel discardedCardsPanel;
-    private History history;
 
-    PlayerPanel(Player player, Tokens tokens, ControlPanel controlPanel, FireworksPanel fireworksPanel, DiscardedCardsPanel discardedCardsPanel, History history) {
+    PlayerPanel(Player player, ControlPanel controlPanel, FireworksPanel fireworksPanel, DiscardedCardsPanel discardedCardsPanel) {
         this.player = player;
-        this.tokens = tokens;
         this.controlPanel = controlPanel;
         this.fireworksPanel = fireworksPanel;
         this.discardedCardsPanel = discardedCardsPanel;
-        this.history = history;
 
         setPreferredSize(LEFT_PANEL_DIMENSION);
         setBackground(BG_COLOR);
@@ -163,12 +159,12 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
             String number = "";
             for (Card card : this.getPlayer().getHand().cards) {
                 if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedColor() != null) {
-                    color = history.getHistoryColor(SelectedSymbol.getSelectedColor());
+                    color = History.getHistory().getHistoryColor(SelectedSymbol.getSelectedColor());
                     if (SelectedSymbol.getSelectedColor() == card.getColor()) {
                         card.knownColor = true;
                     }
                 } else if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedNumber() != null) {
-                    number = history.getHistoryNumber(SelectedSymbol.getSelectedNumber());
+                    number = History.getHistory().getHistoryNumber(SelectedSymbol.getSelectedNumber());
                     if (SelectedSymbol.getSelectedNumber() == card.getNumber()) {
                         card.knownNumber = true;
                     }
@@ -176,8 +172,8 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
             }
             this.repaint();
             SelectedSymbol.clearSelection();
-            tokens.decreaseClues();
-            history.addString(this.getPlayer().getName(), color, number);
+            Tokens.getTokens().decreaseClues();
+            History.getHistory().addString(this.getPlayer().getName(), color, number);
             controlPanel.showDefaultWindow();
             controlPanel.repaint();
 
@@ -248,7 +244,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
             fireworksPanel.repaint();
         } // Else lose life and discard the card
         else {
-            tokens.decreaseLife();
+            Tokens.getTokens().decreaseLife();
             DiscardedCards.getDiscard().addDiscardedCard(card);
             discardedCardsPanel.repaint();
         }
@@ -262,7 +258,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
     private void discardACard(Card card) {
         // Check to see if card is discardable
         if (DiscardedCards.getDiscard().addDiscardedCard(card)) {
-            tokens.increaseClues();
+            Tokens.getTokens().increaseClues();
         }
         controlPanel.isDiscardACard = false;
         controlPanel.showDefaultWindow();

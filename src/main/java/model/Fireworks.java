@@ -51,26 +51,33 @@ public class Fireworks {
     public boolean addFireworkCard(Card card) {
         assert card != null;
         int index = card.getColor().ordinal();
-
-        if (fireworks[index].getNumber() == CardNumber.ZERO && card.getNumber() == CardNumber.ONE) {
-                fireworks[index] = card;
-            return true;
-        } else if (fireworks[index].getNumber().next() == card.getNumber()) {
+        boolean success = false;
+        if (isPlayable(card)) {
             fireworks[index] = card;
-            if(card.getNumber().equals(CardNumber.FIVE)) {
+            success = true;
+            if (card.getNumber().equals(CardNumber.FIVE)) {
                 Tokens.getTokens().increaseClues();
             }
-            return true;
         }
-        return false;
+        return success;
     }
 
     public boolean allFireworksFinished() {
         for (Card card : fireworks) {
-            if(!card.getNumber().equals(CardNumber.FIVE)) {
+            if (!card.getNumber().equals(CardNumber.FIVE)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean isPlayable(Card card) {
+        int index = card.getColor().ordinal();
+        if (fireworks[index].getNumber() == CardNumber.ZERO && card.getNumber() == CardNumber.ONE) {
+            return true;
+        } else if (fireworks[index].getNumber().next() == card.getNumber()) {
+            return true;
+        }
+        return false;
     }
 }

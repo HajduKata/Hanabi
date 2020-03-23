@@ -44,10 +44,9 @@ public class ControlPanel extends JPanel {
     private CardLayout cardLayout;
     private JPanel extensionPanel;
     private JPanel historyPanel;
-    private History history;
+    private History history = History.getHistory();
 
-    public ControlPanel(History history) {
-        this.history = history;
+    public ControlPanel() {
         // Control buttons
         JPanel controlButtonsContainer = new JPanel();
         controlButtonsContainer.setLayout(new BoxLayout(controlButtonsContainer, BoxLayout.Y_AXIS));
@@ -201,7 +200,7 @@ public class ControlPanel extends JPanel {
         }
     }
 
-    private void resetAllCards() {
+    public void resetAllCards() {
         for (Player player : Players.getThePlayers()) {
             if (!player.isHumanPlayer()) {
                 for (Card card : player.getHand().cards) {
@@ -216,9 +215,8 @@ public class ControlPanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-//        setBackground(BG_COLOR);
         paintHistory(g);
+        super.paintComponent(g);
     }
 
     private void paintHistory(Graphics g) {
@@ -226,6 +224,8 @@ public class ControlPanel extends JPanel {
         for (Object label : history.getHistoryList()) {
             historyPanel.add((JLabel) label);
         }
+        historyPanel.repaint();
+
     }
 
 }
