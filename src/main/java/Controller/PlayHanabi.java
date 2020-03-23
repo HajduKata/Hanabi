@@ -1,13 +1,10 @@
 package controller;
 
-import model.Card;
-import model.CardColor;
 import model.Fireworks;
 import model.HanabiCards;
 import model.Player;
 import model.Players;
 import model.Tokens;
-import view.ControlPanel;
 import view.GameTable;
 import view.SetupWindow;
 
@@ -21,10 +18,11 @@ public class PlayHanabi implements ImageObserver {
 
     private boolean gameEnd = false;
     private GameTable table;
+    AIController aiController;
 
     public PlayHanabi() {
         SetupWindow setupWindow = new SetupWindow();
-
+        aiController = new AIController();
         while(!setupWindow.done) {
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -67,8 +65,10 @@ public class PlayHanabi implements ImageObserver {
     public void playerTurn(Player actualPlayer) {
         // AI logic comes here
         if (actualPlayer.isAIPlayer()) {
-            JOptionPane.showMessageDialog(null, actualPlayer.getName(), "Actual player", JOptionPane.INFORMATION_MESSAGE);
+            aiController.chooseAction();
+            JOptionPane.showMessageDialog(null, actualPlayer.getName(), "Gépi játékos köre", JOptionPane.INFORMATION_MESSAGE);
             actualPlayer.setTheirTurn(false);
+            table.repaintAll();
         } else {
             table.getControlPanel().playCardButton.setEnabled(true);
             table.getControlPanel().discardCardButton.setEnabled(true);

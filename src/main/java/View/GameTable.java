@@ -35,7 +35,7 @@ public class GameTable extends JFrame {
 
     private static final int LEFT_PANEL_WIDTH = CARD_SIZE_X + 5 * CARD_OFFSET_X + BORDER_SIZE;
     private static final int MID_PANEL_WIDTH = 5 * CARD_SIZE_X + 4 * GAP + BORDER_SIZE;
-    public static final int RIGHT_PANEL_WIDTH = (numberOfColors + 1) * SYMBOL_SIZE_X + numberOfColors * GAP + BORDER_SIZE;
+    static final int RIGHT_PANEL_WIDTH = (numberOfColors + 1) * SYMBOL_SIZE_X + numberOfColors * GAP + BORDER_SIZE;
     static final int CONTROL_PANEL_HEIGHT = 150;
 
     private static final Dimension MIN_TABLE_DIMENSION = new Dimension(TABLE_SIZE_WIDTH, TABLE_SIZE_HEIGHT);
@@ -47,15 +47,19 @@ public class GameTable extends JFrame {
     static final int BUTTON_HEIGHT = 25;
 
     private ControlPanel controlPanel;
+    private FireworksPanel fireworksPanel;
+    private DiscardedCardsPanel discardedCardsPanel;
+    private CluePanel cluePanel;
+
+    private JPanel playersContainer;
+    private JPanel placedCardsContainer;
+    private JPanel controlContainer;
 
     public GameTable() {
-
         setTitle("Hanabi");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
         setUndecorated(false); // hide|show window header
-
 
         initTable();
 
@@ -65,40 +69,32 @@ public class GameTable extends JFrame {
     }
 
     private void initTable() {
-        // Initialization with 8 clues and 3 lives
-        Tokens tokens = Tokens.getTokens();
-
         // Fireworks and Discarded cards panels
-        JPanel placedCardsContainer = new JPanel();
+        placedCardsContainer = new JPanel();
         placedCardsContainer.setPreferredSize(MID_PANEL_DIMENSION);
         placedCardsContainer.setLayout(new BoxLayout(placedCardsContainer, BoxLayout.Y_AXIS));
         placedCardsContainer.setAlignmentX(LEFT_ALIGNMENT);
         placedCardsContainer.setAlignmentY(TOP_ALIGNMENT);
         // Initializing fireworks panel
-        FireworksPanel fireworksPanel = new FireworksPanel(Fireworks.getFireworks());
+        fireworksPanel = new FireworksPanel(Fireworks.getFireworks());
         // Add empty fireworks to container
         placedCardsContainer.add(fireworksPanel);
-        // Create empty discard piles
-        DiscardedCards discard = DiscardedCards.getDiscard();
         // Initializing discarded cards panel
-        DiscardedCardsPanel discardedCardsPanel = new DiscardedCardsPanel(discard);
+        discardedCardsPanel = new DiscardedCardsPanel(DiscardedCards.getDiscard());
         // Add empty discarded cards to container
         placedCardsContainer.add(discardedCardsPanel);
 
-        // Initializing History
-        History history = History.getHistory();
         // Initializing Control Panel
-        ControlPanel controlPanel = new ControlPanel(history);
-        this.controlPanel = controlPanel;
+        controlPanel = new ControlPanel();
         // Control panel and information panel
-        JPanel controlContainer = new JPanel();
+        controlContainer = new JPanel();
         controlContainer.setPreferredSize(RIGHT_PANEL_DIMENSION);
         controlContainer.setLayout(new BoxLayout(controlContainer, BoxLayout.Y_AXIS));
         controlContainer.setAlignmentX(LEFT_ALIGNMENT);
         controlContainer.setAlignmentY(TOP_ALIGNMENT);
 
         // Clues and Fails
-        CluePanel cluePanel = new CluePanel(tokens);
+        cluePanel = new CluePanel(Tokens.getTokens());
         cluePanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 70));
         cluePanel.setLayout(new BoxLayout(cluePanel, BoxLayout.Y_AXIS));
         cluePanel.setAlignmentX(CENTER_ALIGNMENT);
@@ -110,13 +106,13 @@ public class GameTable extends JFrame {
 
 
         // Player cards panels
-        JPanel playersContainer = new JPanel();
+        playersContainer = new JPanel();
         playersContainer.setPreferredSize(LEFT_PANEL_DIMENSION);
         playersContainer.setLayout(new BoxLayout(playersContainer, BoxLayout.Y_AXIS));
         playersContainer.setAlignmentX(LEFT_ALIGNMENT);
         playersContainer.setAlignmentY(TOP_ALIGNMENT);
         for (Player player : Players.getThePlayers()) {
-            PlayerPanel playerPanel = new PlayerPanel(player, tokens, controlPanel, fireworksPanel, discardedCardsPanel, history);
+            PlayerPanel playerPanel = new PlayerPanel(player, controlPanel, fireworksPanel, discardedCardsPanel);
             playerPanel.addMouseListener(playerPanel);
             playerPanel.addMouseMotionListener(playerPanel);
             player.setPlayerPanel(playerPanel);
@@ -133,4 +129,11 @@ public class GameTable extends JFrame {
     public ControlPanel getControlPanel() {
         return controlPanel;
     }
+
+    public void repaintAll() {
+        this.repaint();
+        controlPanel.repaint();
+    }
+
+
 }

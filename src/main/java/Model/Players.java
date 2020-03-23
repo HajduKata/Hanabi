@@ -41,7 +41,9 @@ public class Players {
         players = new ArrayList<>(numberOfPlayers);
         //Initialize the human player
         Player human = new Player(HUMAN);
-        human.setName(name);
+        if(!name.equals("")) {
+            human.setName(name);
+        }
         players.add(0, human); // human player is always the first indexed
 
         //Initialize all the AI players
