@@ -224,6 +224,7 @@ public class ControlPanel extends JPanel {
         for (Object label : history.getHistoryList()) {
             historyPanel.add((JLabel) label);
         }
+        historyPanel.validate();
         historyPanel.repaint();
 
     }

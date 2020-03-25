@@ -22,7 +22,6 @@ public class PlayHanabi implements ImageObserver {
 
     public PlayHanabi() {
         SetupWindow setupWindow = new SetupWindow();
-        aiController = new AIController();
         while(!setupWindow.done) {
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -30,6 +29,7 @@ public class PlayHanabi implements ImageObserver {
                 e.printStackTrace();
             }
         }
+        aiController = new AIController(setupWindow.getNumberOfPlayers());
         initGame(setupWindow, setupWindow.getNumberOfPlayers(), setupWindow.getName());
     }
 
@@ -65,7 +65,7 @@ public class PlayHanabi implements ImageObserver {
     public void playerTurn(Player actualPlayer) {
         // AI logic comes here
         if (actualPlayer.isAIPlayer()) {
-            aiController.chooseAction();
+            aiController.chooseAction(actualPlayer);
             JOptionPane.showMessageDialog(null, actualPlayer.getName(), "Gépi játékos köre", JOptionPane.INFORMATION_MESSAGE);
             actualPlayer.setTheirTurn(false);
             table.repaintAll();

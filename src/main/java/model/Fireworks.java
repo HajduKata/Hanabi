@@ -80,4 +80,13 @@ public class Fireworks {
         }
         return false;
     }
+
+    public boolean noneOfThatNumberYetPlayed(CardNumber number) {
+        for (Card card : fireworks) {
+            if(card.getNumber().equals(number)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

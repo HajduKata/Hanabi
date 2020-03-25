@@ -3,6 +3,7 @@ package controller;
 import model.Card;
 import model.CardColor;
 import model.CardNumber;
+import model.DiscardedCards;
 import model.Fireworks;
 import model.Hand;
 import model.History;
@@ -10,19 +11,21 @@ import model.Player;
 import model.Players;
 import model.Tokens;
 
+import static view.PlayerPanel.drawNewCard;
+
 public class AIController {
-    //    Players players;
     private CardColor actualColor;
     private CardNumber actualNumber;
-    private int index = 0;
+    private int numberOfPlayers;
 
-    public AIController() {
-//        this.players = players;
+
+    AIController(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
     }
 
-    public void chooseAction() {
+    void chooseAction(Player thisPlayer) {
         /*
-        Action algorithm A player will act using her private information with the following priority:
+        Action algorithm: A player will act using her private information with the following priority:
         1. Play the playable card with lowest index.
         2. If there are less than 5 cards in the discard pile, discard the dead card with lowest index.
         3. If there are hint tokens available, give a hint.
@@ -31,15 +34,94 @@ public class AIController {
         6. Discard the dispensable card with lowest index.
         7. Discard card c1.
         */
-        for (Player player : Players.getThePlayers()) {
-            if (/*player.isHumanPlayer() &&*/ Tokens.getTokens().getClues() > 0 && Players.getThePlayers().get(index).equals(player)) {
-                giveHint(player.getHand(), player.getName());
+
+        // 1. Play a card
+        if (canPlayACard(thisPlayer.getHand())) {
+            // canPlayACard pre-sets the actualColor and actualNumber variables
+            playACard(thisPlayer, thisPlayer.getHand());
+        } // 3. Give hint - right now only what can be played
+        else {
+            int nextPlayerIndex = Players.getThePlayers().indexOf(thisPlayer) + 1;
+            if (nextPlayerIndex >= numberOfPlayers) {
+                nextPlayerIndex = 0;
+            }
+            Player nextPlayer = Players.getThePlayers().get(nextPlayerIndex);
+
+            if (Tokens.getTokens().getClues() > 0 && !nextPlayer.equals(thisPlayer)) {
+                giveHint(nextPlayer.getHand(), nextPlayer.getName());
             }
         }
-        index++;
-        if(index>=Players.numberOfPlayers) {
-            index = 0;
+    }
+
+    private boolean canPlayACard(Hand hand) {
+        for (Card card : hand.cards) {
+            int colorCounter = 0;
+            actualColor = null;
+            int numberCounter = 0;
+            actualNumber = null;
+
+            if (card.knownColor) {
+                actualColor = card.getColor();
+                actualNumber = card.getNumber();
+                return Fireworks.getFireworks().isPlayable(new Card(actualColor, actualNumber));
+            } else {
+                for (CardColor color : card.getAssumedColor().keySet()) {
+                    if (card.getAssumedColor().get(color).equals(true)) {
+                        colorCounter++;
+                    }
+                }
+            }
+            if (colorCounter == 1) {
+                actualColor = card.getColor();
+            }
+
+            if (card.knownNumber) {
+                actualColor = card.getColor();
+                actualNumber = card.getNumber();
+                return Fireworks.getFireworks().isPlayable(new Card(actualColor, actualNumber));
+            } else {
+                for (CardNumber number : card.getAssumedNumber().keySet()) {
+                    if (card.getAssumedNumber().get(number).equals(true)) {
+                        numberCounter++;
+                    }
+                }
+            }
+            if (numberCounter == 1) {
+                actualNumber = card.getNumber();
+            }
+
+            // If only the number is known, but there wasn't any card played of that number
+            if (numberCounter == 1 && Fireworks.getFireworks().noneOfThatNumberYetPlayed(actualNumber)) {
+                return true;
+            }
+
+            // If both information is assumed, check if the card is playable
+            if (colorCounter == 1 && numberCounter == 1) {
+                return Fireworks.getFireworks().isPlayable(new Card(actualColor, actualNumber));
+            }
         }
+        return false;
+    }
+
+    private void playACard(Player player, Hand hand) {
+        Card cardToBePlayed = new Card(CardColor.RED);
+        for (Card card : hand.cards) {
+            if (card.getColor().equals(actualColor) && card.getNumber().equals(actualNumber)) {
+                cardToBePlayed = card;
+            }
+        }
+
+        // Check to see if card is playable
+        if (Fireworks.getFireworks().addFireworkCard(cardToBePlayed)) {
+        } // Else lose life and discard the card
+        else {
+            Tokens.getTokens().decreaseLife();
+            DiscardedCards.getDiscard().addDiscardedCard(cardToBePlayed);
+        }
+        drawNewCard(player, cardToBePlayed);
+    }
+
+    public void discardACard(Hand hand) {
 
     }
 
@@ -78,10 +160,20 @@ public class AIController {
 
         // Give a hint to the player
         for (Card card : hand.cards) {
-            if (card.getNumber().equals(actualNumber)) {
-                card.knownNumber = true;
-            } else if (card.getColor().equals(actualColor)) {
-                card.knownColor = true;
+            if (actualColor != null) {
+                if (card.getColor().equals(actualColor)) {
+                    card.knownColor = true;
+                    card.setAssumedColor(card.getColor(), true);
+                } else {
+                    card.setAssumedColor(card.getColor(), false);
+                }
+            } else if (actualNumber != null) {
+                if (card.getNumber().equals(actualNumber)) {
+                    card.knownNumber = true;
+                    card.setAssumedNumber(card.getNumber(), true);
+                } else {
+                    card.setAssumedNumber(card.getNumber(), false);
+                }
             }
         }
         if (actualNumber != null) {

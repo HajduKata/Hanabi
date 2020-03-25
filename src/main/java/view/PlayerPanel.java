@@ -155,25 +155,31 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
 
         // When there is a symbol selected
         if (this.getPlayer().isAIPlayer() && (SelectedSymbol.getSelectedColor() != null || SelectedSymbol.getSelectedNumber() != null)) {
-            String color = "";
-            String number = "";
+            String colorString = "";
+            String numberString = "";
             for (Card card : this.getPlayer().getHand().cards) {
-                if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedColor() != null) {
-                    color = History.getHistory().getHistoryColor(SelectedSymbol.getSelectedColor());
+                if (SelectedSymbol.getSelectedColor() != null) {
+                    colorString = History.getHistory().getHistoryColor(SelectedSymbol.getSelectedColor());
                     if (SelectedSymbol.getSelectedColor() == card.getColor()) {
                         card.knownColor = true;
+                        card.setAssumedColor(card.getColor(), true);
+                    } else {
+                        card.setAssumedColor(card.getColor(), false);
                     }
-                } else if (this.getPlayer().isAIPlayer() && SelectedSymbol.getSelectedNumber() != null) {
-                    number = History.getHistory().getHistoryNumber(SelectedSymbol.getSelectedNumber());
+                } else if (SelectedSymbol.getSelectedNumber() != null) {
+                    numberString = History.getHistory().getHistoryNumber(SelectedSymbol.getSelectedNumber());
                     if (SelectedSymbol.getSelectedNumber() == card.getNumber()) {
                         card.knownNumber = true;
+                        card.setAssumedNumber(card.getNumber(), true);
+                    } else {
+                        card.setAssumedNumber(card.getNumber(), false);
                     }
                 }
             }
             this.repaint();
             SelectedSymbol.clearSelection();
             Tokens.getTokens().decreaseClues();
-            History.getHistory().addString(this.getPlayer().getName(), color, number);
+            History.getHistory().addString(this.getPlayer().getName(), colorString, numberString);
             controlPanel.showDefaultWindow();
             controlPanel.repaint();
 
@@ -230,7 +236,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
     public void mouseDragged(MouseEvent e) {
     }
 
-    private void drawNewCard(Player player, Card oldCard) {
+    public static void drawNewCard(Player player, Card oldCard) {
         player.getHand().remove(oldCard);
         Card newCard = HanabiCards.DECK.pop();
         if (!newCard.getNumber().equals(CardNumber.ZERO)) {

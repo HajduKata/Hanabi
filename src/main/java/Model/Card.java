@@ -2,7 +2,10 @@ package model;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static view.HanabiUtilities.classLoader;
 import static view.HanabiUtilities.loadImage;
@@ -28,6 +31,8 @@ public class Card implements Comparable<Card> {
     private boolean selected;
     public boolean knownColor;
     public boolean knownNumber;
+    private SortedMap<CardColor, Boolean> assumedColor;
+    private SortedMap<CardNumber, Boolean> assumedNumber;
 
 
     /**
@@ -41,6 +46,15 @@ public class Card implements Comparable<Card> {
         this.knownColor = false;
         this.knownNumber = false;
         this.selected = false;
+
+        assumedColor = new TreeMap<>();
+        for (CardColor color : CardColor.values()) {
+            assumedColor.put(color, true);
+        }
+        assumedNumber = new TreeMap<>();
+        for (CardNumber number : CardNumber.values()) {
+            assumedNumber.put(number, true);
+        }
     }
 
     /**
@@ -59,6 +73,15 @@ public class Card implements Comparable<Card> {
         String cardFilename = cardColor.getValue() + cardNumber.getValue();
         URL imageURL = Objects.requireNonNull(classLoader.getResource("hanabi_cards/" + cardFilename + ".png"));
         this.image = loadImage(imageURL);
+
+        assumedColor = new TreeMap<>();
+        for (CardColor color : CardColor.values()) {
+            assumedColor.put(color, true);
+        }
+        assumedNumber = new TreeMap<>();
+        for (CardNumber number : CardNumber.values()) {
+            assumedNumber.put(number, true);
+        }
     }
 
     public CardColor getColor() {
@@ -95,6 +118,22 @@ public class Card implements Comparable<Card> {
 
     void setY(int y) {
         this.y = y;
+    }
+
+    public SortedMap<CardColor, Boolean> getAssumedColor() {
+        return assumedColor;
+    }
+
+    public void setAssumedColor(CardColor color, boolean assumption) {
+        assumedColor.put(color, assumption);
+    }
+
+    public SortedMap<CardNumber, Boolean> getAssumedNumber() {
+        return assumedNumber;
+    }
+
+    public void setAssumedNumber(CardNumber number, boolean assumption) {
+        assumedNumber.put(number, assumption);
     }
 
     @Override
