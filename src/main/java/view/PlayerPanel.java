@@ -6,6 +6,7 @@ import model.CardNumber;
 import model.DiscardedCards;
 import model.Fireworks;
 import model.HanabiCards;
+import model.Hand;
 import model.History;
 import model.Player;
 import model.Players;
@@ -28,7 +29,6 @@ import java.util.List;
 import static model.Card.CARD_OFFSET_X;
 import static model.Card.CARD_SIZE_X;
 import static model.Card.CARD_SIZE_Y;
-import static model.Hand.NUM_OF_CARDS_IN_HAND;
 import static view.GameTable.LEFT_PANEL_DIMENSION;
 import static view.HanabiUtilities.CARD_START_POS_X;
 import static view.HanabiUtilities.COLOR_OFFSET_X;
@@ -113,7 +113,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
      */
     @Override
     public void mouseClicked(MouseEvent mouseE) {
-        int xOfLastCard = CARD_START_POS_X + (NUM_OF_CARDS_IN_HAND - 1) * CARD_OFFSET_X;
+        int xOfLastCard = CARD_START_POS_X + (Hand.getNumberOfCardsInHand() - 1) * CARD_OFFSET_X;
 
         // When player plays a card
         if (/*this.getPlayer().isHumanPlayer() &&*/ controlPanel.isPlayACard) {
@@ -214,7 +214,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
     @Override
     public void mouseMoved(MouseEvent mouseE) {
         //TODO ha a panelből kivisszük az egeret (5 játékosnál mert ott érintkezik a kártya alja a panel szélével), a kártya selected marad
-        int xOfLastCard = CARD_START_POS_X + (NUM_OF_CARDS_IN_HAND - 1) * CARD_OFFSET_X;
+        int xOfLastCard = CARD_START_POS_X + (Hand.getNumberOfCardsInHand() - 1) * CARD_OFFSET_X;
         if (this.getPlayer().isHumanPlayer() && (controlPanel.isPlayACard || controlPanel.isDiscardACard)) {
             for (Card card : this.getPlayer().getHand().cards) {
                 card.reset();

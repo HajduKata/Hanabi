@@ -5,7 +5,9 @@ import model.HanabiCards;
 import model.Player;
 import model.Players;
 import model.Tokens;
+import view.GameLostWindow;
 import view.GameTable;
+import view.GameWonWindow;
 import view.SetupWindow;
 
 import javax.swing.JFrame;
@@ -40,11 +42,11 @@ public class PlayHanabi implements ImageObserver {
         Players.setupPlayers(numberOfPlayers, name);
 
         table = new GameTable();
-        //play();
+
     }
 
-    public void play() {
-        boolean endOfDeck = false;
+    public boolean play() {
+        boolean endOfDeck;
         do {
             Player actualPlayer = Players.nextPlayer();
             actualPlayer.setTheirTurn(true);
@@ -59,14 +61,39 @@ public class PlayHanabi implements ImageObserver {
                 playerTurn(actualPlayer);
             }
         }
+
         //TODO játék végi kiértékelés
+        //TODO csúnyán néz ki, és nem működik a játék indítás gomb
+        if(Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
+            GameWonWindow gameWonWindow = new GameWonWindow(Fireworks.getFireworks().getNumberOfCardsPlayed(), table);
+            while(gameWonWindow.done == null) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return gameWonWindow.done;
+        }
+        if(Tokens.getTokens().getLife() == 0) {
+            GameLostWindow gameLostWindow = new GameLostWindow(table);
+            while(gameLostWindow.done == null) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return gameLostWindow.done;
+        }
+        return false;
     }
 
     public void playerTurn(Player actualPlayer) {
         // AI logic comes here
         if (actualPlayer.isAIPlayer()) {
             aiController.chooseAction(actualPlayer);
-            JOptionPane.showMessageDialog(null, actualPlayer.getName(), "Gépi játékos köre", JOptionPane.INFORMATION_MESSAGE);
+
             actualPlayer.setTheirTurn(false);
             table.repaintAll();
         } else {

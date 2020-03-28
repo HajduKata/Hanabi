@@ -38,4 +38,8 @@ public class SelectedSymbol {
         selectedColor = null;
         selectedNumber = null;
     }
+
+    public static void clearInstance() {
+        instance = null;
+    }
 }

@@ -82,4 +82,8 @@ public class History {
         }
         return string;
     }
+
+    public static void clearInstance() {
+        instance = null;
+    }
 }

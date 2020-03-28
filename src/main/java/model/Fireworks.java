@@ -10,10 +10,13 @@ public class Fireworks {
     /* Holds the last card of each firework color */
     private static Card[] fireworks = new Card[MAX_NUMBER_OF_COLORS];
 
+    private int numberOfCardsPlayed;
+
     /**
      * Private empty constructor (singleton) of fireworks.
      */
     private Fireworks() {
+        numberOfCardsPlayed = 0;
         for (CardColor color : CardColor.values()) {
             fireworks[color.ordinal()] = new Card(color);
         }
@@ -59,6 +62,7 @@ public class Fireworks {
                 Tokens.getTokens().increaseClues();
             }
         }
+        numberOfCardsPlayed++;
         return success;
     }
 
@@ -83,10 +87,22 @@ public class Fireworks {
 
     public boolean noneOfThatNumberYetPlayed(CardNumber number) {
         for (Card card : fireworks) {
-            if(card.getNumber().equals(number)) {
+            if (card.getNumber().equals(number)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean isDeadCard(Card card) {
+        return !card.getNumber().isHigher(fireworks[card.getColor().ordinal()].getNumber());
+    }
+
+    public int getNumberOfCardsPlayed() {
+        return numberOfCardsPlayed;
+    }
+
+    public static void clearInstance() {
+        instance = null;
     }
 }

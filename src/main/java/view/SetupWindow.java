@@ -1,5 +1,12 @@
 package view;
 
+import model.DiscardedCards;
+import model.Fireworks;
+import model.HanabiCards;
+import model.History;
+import model.SelectedSymbol;
+import model.Tokens;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -24,6 +31,15 @@ public class SetupWindow extends JFrame implements ActionListener {
     public boolean done = false;
 
     public SetupWindow() {
+        // Clear all previous instances
+        DiscardedCards.clearInstance();
+        Fireworks.clearInstance();
+        History.clearInstance();
+        SelectedSymbol.clearInstance();
+        Tokens.clearInstance();
+        HanabiCards.initDeck();
+
+        // SetupWindow starts here
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Első Lépések");
         this.setSize(new Dimension(300, 200));

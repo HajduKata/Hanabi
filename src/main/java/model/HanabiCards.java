@@ -11,9 +11,29 @@ public enum HanabiCards {
 
     DECK;
 
-    private List<Card> cards;
+    private static List<Card> cards;
 
     HanabiCards() {
+        initDeck();
+        shuffle();
+    }
+
+    public void shuffle() {
+        Collections.shuffle(cards);
+    }
+
+    public Card pop() {
+        if (endOfDeck()) {
+            return new Card(CardColor.RED);
+        }
+        return cards.remove(0);
+    }
+
+    public boolean endOfDeck() {
+        return cards.isEmpty();
+    }
+
+    public static void initDeck() {
         cards = new ArrayList<>(50);
         for (CardColor cardColor : CardColor.values()) {
             for (CardNumber cardNumber : CardNumber.values()) {
@@ -35,21 +55,5 @@ public enum HanabiCards {
                 }
             }
         }
-        shuffle();
-    }
-
-    public void shuffle() {
-        Collections.shuffle(cards);
-    }
-
-    public Card pop() {
-        if (endOfDeck()) {
-            return new Card(CardColor.RED);
-        }
-        return cards.remove(0);
-    }
-
-    public boolean endOfDeck() {
-        return cards.isEmpty();
     }
 }

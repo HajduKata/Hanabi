@@ -27,4 +27,19 @@ public enum CardNumber {
                 return null;
         }
     }
+
+    /**
+     * If @this is higher than @number, return true
+     */
+    public boolean isHigher(CardNumber number) {
+        if(this.equals(ONE) && !number.equals(ONE)) {
+            return true;
+        } else if(this.equals(TWO) && (!number.equals(ONE) || !number.equals(TWO))) {
+            return true;
+        } else if(this.equals(THREE) && (!number.equals(ONE) || !number.equals(TWO) || !number.equals(THREE))) {
+            return true;
+        } else if(this.equals(FOUR) && (!number.equals(ONE) || !number.equals(TWO) || !number.equals(THREE) || !number.equals(FOUR))) {
+            return true;
+        } else return this.equals(FIVE);
+    }
 }

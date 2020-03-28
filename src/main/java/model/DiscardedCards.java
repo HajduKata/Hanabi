@@ -16,11 +16,13 @@ public class DiscardedCards {
     private static DiscardedCards instance;
     /* Holds all the cards that have been discarded */
     SortedMap<CardColor, List<Card>> discardedCards;
+    private int numberOfDiscardedCards;
 
     /**
      * Private empty constructor (singleton) of discard.
      */
      private DiscardedCards() {
+         numberOfDiscardedCards = 0;
         discardedCards = new TreeMap<>();
         for (CardColor color : CardColor.values()) {
             Card empyCard = new Card(color);
@@ -73,8 +75,15 @@ public class DiscardedCards {
         actualColorList.add(card);
         Collections.sort(actualColorList);
         discardedCards.replace(card.getColor(), actualColorList);
+        numberOfDiscardedCards++;
         return true;
     }
 
+    public int getNumberOfDiscardedCards() {
+        return numberOfDiscardedCards;
+    }
 
+    public static void clearInstance() {
+        instance = null;
+    }
 }

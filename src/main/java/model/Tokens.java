@@ -6,13 +6,13 @@ public class Tokens {
     private static int clues;
 
     private Tokens() {
+        life = 3;
+        clues = 8;
     }
 
     public static Tokens getTokens() {
         if (instance == null) {
             instance = new Tokens();
-            life = 3;
-            clues = 8;
         }
         return instance;
     }
@@ -43,5 +43,9 @@ public class Tokens {
 
     public void increaseClues() {
         clues++;
+    }
+
+    public static void clearInstance() {
+        instance = null;
     }
 }

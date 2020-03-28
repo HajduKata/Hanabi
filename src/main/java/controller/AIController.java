@@ -11,6 +11,8 @@ import model.Player;
 import model.Players;
 import model.Tokens;
 
+import javax.swing.JOptionPane;
+
 import static view.PlayerPanel.drawNewCard;
 
 public class AIController {
@@ -24,6 +26,7 @@ public class AIController {
     }
 
     void chooseAction(Player thisPlayer) {
+        String playerName = thisPlayer.getName();
         /*
         Action algorithm: A player will act using her private information with the following priority:
         1. Play the playable card with lowest index.
@@ -31,25 +34,43 @@ public class AIController {
         3. If there are hint tokens available, give a hint.
         4. Discard the dead card with lowest index.
         5. If a card in the player’s hand is the same as another card in any player’s hand, i.e. it is a duplicate, discard that card.
+        *** ^ Ezzel nem értek egyet
         6. Discard the dispensable card with lowest index.
         7. Discard card c1.
         */
 
-        // 1. Play a card
-        if (canPlayACard(thisPlayer.getHand())) {
+        actualColor = null;
+        actualNumber = null;
+
+        // 1. Play the playable card with lowest index.
+        if (canPlayACard(thisPlayer)) {
             // canPlayACard pre-sets the actualColor and actualNumber variables
-            playACard(thisPlayer, thisPlayer.getHand());
-        } // 3. Give hint - right now only what can be played
-        else {
+//            Card cardToBePlayed = new Card(actualColor, actualNumber);
+            playACard(thisPlayer, whatCardToPlay(thisPlayer));
+            JOptionPane.showMessageDialog(null, playerName + " kijátszott egy kártyát.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
+        } // 2. If there are less than 5 cards in the discard pile, discard the dead card with lowest index.
+        else if (DiscardedCards.getDiscard().getNumberOfDiscardedCards() < 5 && canDiscardACard(thisPlayer)) {
+            discardACard(thisPlayer, whatToDiscard(thisPlayer));
+            JOptionPane.showMessageDialog(null, playerName + " eldobott egy lapot.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
+        } // 3. If there are hint tokens available, give a hint. - right now only what can be played
+        else if (Tokens.getTokens().getClues() > 0) {
             int nextPlayerIndex = Players.getThePlayers().indexOf(thisPlayer) + 1;
             if (nextPlayerIndex >= numberOfPlayers) {
                 nextPlayerIndex = 0;
             }
             Player nextPlayer = Players.getThePlayers().get(nextPlayerIndex);
-
-            if (Tokens.getTokens().getClues() > 0 && !nextPlayer.equals(thisPlayer)) {
+            if (!nextPlayer.equals(thisPlayer)) {
                 giveHint(nextPlayer.getHand(), nextPlayer.getName());
+                JOptionPane.showMessageDialog(null, playerName + " utalást adott.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
             }
+        } // 4. Discard the dead card with lowest index.
+        else if (canDiscardACard(thisPlayer)) {
+            discardACard(thisPlayer, whatToDiscard(thisPlayer));
+            JOptionPane.showMessageDialog(null, playerName + " eldobott egy lapot.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
+        }
+        //TODO Supposed to discard the card with the lowest index, if they have no dead cards
+        else {
+            JOptionPane.showMessageDialog(null, playerName + " semmit se csinááát.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -60,10 +81,13 @@ public class AIController {
             int numberCounter = 0;
             actualNumber = null;
 
+            //TODO tudja a kártya valódi számát
             if (card.knownColor) {
                 actualColor = card.getColor();
                 actualNumber = card.getNumber();
-                return Fireworks.getFireworks().isPlayable(new Card(actualColor, actualNumber));
+                if (Fireworks.getFireworks().isPlayable(new Card(actualColor, actualNumber))) {
+                    return true;
+                }
             } else {
                 for (CardColor color : card.getAssumedColor().keySet()) {
                     if (card.getAssumedColor().get(color).equals(true)) {
@@ -75,10 +99,13 @@ public class AIController {
                 actualColor = card.getColor();
             }
 
+            //TODO tudja a kártya valódi színét
             if (card.knownNumber) {
                 actualColor = card.getColor();
                 actualNumber = card.getNumber();
-                return Fireworks.getFireworks().isPlayable(new Card(actualColor, actualNumber));
+                if (Fireworks.getFireworks().isPlayable(new Card(actualColor, actualNumber))) {
+                    return true;
+                }
             } else {
                 for (CardNumber number : card.getAssumedNumber().keySet()) {
                     if (card.getAssumedNumber().get(number).equals(true)) {
@@ -103,29 +130,82 @@ public class AIController {
         return false;
     }
 
-    private void playACard(Player player, Hand hand) {
-        Card cardToBePlayed = new Card(CardColor.RED);
-        for (Card card : hand.cards) {
-            if (card.getColor().equals(actualColor) && card.getNumber().equals(actualNumber)) {
-                cardToBePlayed = card;
+    private boolean canPlayACard(Player player) {
+        for (Card card : player.getHand().cards) {
+            if (Fireworks.getFireworks().isPlayable(card)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Card whatCardToPlay(Player player) {
+        Card cardToPlay = null;
+
+        for (Card card : player.getHand().cards) {
+            if (Fireworks.getFireworks().isPlayable(card)) {
+                cardToPlay = card;
             }
         }
 
-        // Check to see if card is playable
-        if (Fireworks.getFireworks().addFireworkCard(cardToBePlayed)) {
-        } // Else lose life and discard the card
-        else {
-            Tokens.getTokens().decreaseLife();
-            DiscardedCards.getDiscard().addDiscardedCard(cardToBePlayed);
+        return cardToPlay;
+    }
+
+    private void playACard(Player player, Card cardToPlayed) {
+        // Check if the card we want to play is in the hand of the player
+        for (Card card : player.getHand().cards) {
+            if (card.getColor().equals(cardToPlayed.getColor()) && card.getNumber().equals(cardToPlayed.getNumber())) {
+                // Play the card if its playable
+                if (Fireworks.getFireworks().addFireworkCard(card)) {
+                } // Else lose life and discard the card
+                else {
+                    Tokens.getTokens().decreaseLife();
+                    DiscardedCards.getDiscard().addDiscardedCard(card);
+                }
+                drawNewCard(player, card);
+                return;
+            }
         }
-        drawNewCard(player, cardToBePlayed);
-    }
 
-    public void discardACard(Hand hand) {
 
     }
 
-    public void giveHint(Hand hand, String playername) {
+    private boolean canDiscardACard(Player player) {
+        for (Card card : player.getHand().cards) {
+            if (Fireworks.getFireworks().isDeadCard(card)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Card whatToDiscard(Player player) {
+        Card cardToBeDiscarded = null;
+        for (Card card : player.getHand().cards) {
+            if (Fireworks.getFireworks().isDeadCard(card)) {
+                cardToBeDiscarded = card;
+            }
+        }
+
+        return cardToBeDiscarded;
+    }
+
+    private void discardACard(Player player, Card cardToBeDiscarded) {
+        // Check if the card we want to discard is in the hand of the player
+        for (Card card : player.getHand().cards) {
+            if (card.getColor().equals(cardToBeDiscarded.getColor()) && card.getNumber().equals(cardToBeDiscarded.getNumber())) {
+                // Discard the card and gain a cluetoken
+                if (DiscardedCards.getDiscard().addDiscardedCard(card)) {
+                    Tokens.getTokens().increaseClues();
+                    drawNewCard(player, cardToBeDiscarded);
+                    return;
+                }
+            }
+        }
+
+    }
+
+    private void giveHint(Hand hand, String playername) {
         /*
         The recommendation for a hand will be determined with following priority:
         1. Recommend that the playable card of rank 5 with lowest index be played.
@@ -215,7 +295,7 @@ public class AIController {
         }
     }
 
-    public int symbolCounter(Hand hand, CardColor color, CardNumber number) {
+    private int symbolCounter(Hand hand, CardColor color, CardNumber number) {
         int counter = 0;
         for (Card card : hand.cards) {
             if (card.getColor().equals(color) || card.getNumber().equals(number)) {
@@ -225,7 +305,7 @@ public class AIController {
         return counter;
     }
 
-    public boolean areAllSymbolsPlayable(Hand hand, CardColor color, CardNumber number) {
+    private boolean areAllSymbolsPlayable(Hand hand, CardColor color, CardNumber number) {
         for (Card card : hand.cards) {
             if ((card.getColor().equals(color) || card.getNumber().equals(number))
                     && !Fireworks.getFireworks().isPlayable(card)) {
