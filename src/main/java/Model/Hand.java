@@ -8,19 +8,16 @@ import static view.HanabiUtilities.CARD_START_POS_X;
 import static view.HanabiUtilities.CARD_START_POS_Y;
 
 public class Hand {
-    public static final int NUM_OF_CARDS_IN_HAND;
+    public static int numberOfCardsInHand;
     public List<Card> cards;
-
-    static {
-        if (Players.numberOfPlayers < 4) {
-            NUM_OF_CARDS_IN_HAND = 5;
-        } else {
-            NUM_OF_CARDS_IN_HAND = 4;
-        }
-    }
 
     Hand() {
         cards = new LinkedList<>();
+        if (Players.numberOfPlayers < 4) {
+            numberOfCardsInHand = 5;
+        } else {
+            numberOfCardsInHand = 4;
+        }
     }
 
     public void add(Card card) {
@@ -40,5 +37,9 @@ public class Hand {
             card.setY(CARD_START_POS_Y);
             index++;
         }
+    }
+
+    public static int getNumberOfCardsInHand() {
+        return numberOfCardsInHand;
     }
 }

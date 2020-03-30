@@ -25,12 +25,13 @@ public class Player {
         // Generate name
         if (humanPlayer) {
             this.name = "Te";
+            index = 1;
         } else {
             this.name = "Gépi Játékos " + index;
             index++;
         }
 
-        for (int i = 0; i < Hand.NUM_OF_CARDS_IN_HAND; i++) {
+        for (int i = 0; i < Hand.getNumberOfCardsInHand(); i++) {
             // Deal cards
             Card card = HanabiCards.DECK.pop();
             card.setX(CARD_START_POS_X + i * CARD_OFFSET_X);

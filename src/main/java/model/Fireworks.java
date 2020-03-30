@@ -77,21 +77,36 @@ public class Fireworks {
 
     public boolean isPlayable(Card card) {
         int index = card.getColor().ordinal();
-        if (fireworks[index].getNumber() == CardNumber.ZERO && card.getNumber() == CardNumber.ONE) {
-            return true;
-        } else if (fireworks[index].getNumber().next() == card.getNumber()) {
-            return true;
+        return fireworks[index].getNumber().next() == card.getNumber();
+    }
+
+    public boolean numberCanBePlayed(CardNumber number) {
+        for (CardColor color : CardColor.values()) {
+            if(fireworks[color.ordinal()].getNumber().next() == number) {
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean noneOfThatNumberYetPlayed(CardNumber number) {
+    public int howManyOfThatNumberPlayed(CardNumber number) {
+        int counter = 0;
         for (Card card : fireworks) {
             if (card.getNumber().equals(number)) {
-                return false;
+                counter++;
             }
         }
-        return true;
+        return counter;
+    }
+
+    public int howManyOfThatColorPlayed(CardColor color) {
+        int counter = 0;
+        for (Card card : fireworks) {
+            if (card.getColor().equals(color)) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     public boolean isDeadCard(Card card) {

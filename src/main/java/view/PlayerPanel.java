@@ -157,22 +157,59 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
         if (this.getPlayer().isAIPlayer() && (SelectedSymbol.getSelectedColor() != null || SelectedSymbol.getSelectedNumber() != null)) {
             String colorString = "";
             String numberString = "";
+            // Iterate through the hand of the player
             for (Card card : this.getPlayer().getHand().cards) {
                 if (SelectedSymbol.getSelectedColor() != null) {
                     colorString = History.getHistory().getHistoryColor(SelectedSymbol.getSelectedColor());
+                    // If the card is the same color as the clue given
                     if (SelectedSymbol.getSelectedColor() == card.getColor()) {
                         card.knownColor = true;
                         card.setAssumedColor(card.getColor(), true);
-                    } else {
+                        // The possibility table of the card sets all other colors "false", 0
+                        for (CardColor color : CardColor.values()) {
+                            if (color != SelectedSymbol.getSelectedColor()) {
+                                for (CardNumber number : CardNumber.values()) {
+                                    card.possibilityTable[color.ordinal()][number.ordinal()] = 0;
+                                }
+                            }
+                        }
+                    } // If the card is not the same color as the clue given
+                    else {
                         card.setAssumedColor(card.getColor(), false);
+                        // The possibility table of the card sets all of that color "false", 0
+                        for (CardColor color : CardColor.values()) {
+                            if (color == SelectedSymbol.getSelectedColor()) {
+                                for (CardNumber number : CardNumber.values()) {
+                                    card.possibilityTable[color.ordinal()][number.ordinal()] = 0;
+                                }
+                            }
+                        }
                     }
                 } else if (SelectedSymbol.getSelectedNumber() != null) {
                     numberString = History.getHistory().getHistoryNumber(SelectedSymbol.getSelectedNumber());
+                    // If the card is the same number as the clue given
                     if (SelectedSymbol.getSelectedNumber() == card.getNumber()) {
                         card.knownNumber = true;
                         card.setAssumedNumber(card.getNumber(), true);
-                    } else {
+                        // The possibility table of the card sets all other numbers "false", 0
+                        for (CardNumber number : CardNumber.values()) {
+                            if (number != SelectedSymbol.getSelectedNumber()) {
+                                for (CardColor color : CardColor.values()) {
+                                    card.possibilityTable[color.ordinal()][number.ordinal()] = 0;
+                                }
+                            }
+                        }
+                    } // If the card is not the same number as the clue given
+                    else {
                         card.setAssumedNumber(card.getNumber(), false);
+                        // The possibility table of the card sets all of that number "false", 0
+                        for (CardNumber number : CardNumber.values()) {
+                            if (number == SelectedSymbol.getSelectedNumber()) {
+                                for (CardColor color : CardColor.values()) {
+                                    card.possibilityTable[color.ordinal()][number.ordinal()] = 0;
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -56,4 +56,18 @@ public enum HanabiCards {
             }
         }
     }
+
+    public int howManyOfThatNumberInDeck(CardNumber number) {
+        switch (number) {
+            case ONE:
+                return 3;
+            case TWO:
+            case THREE:
+            case FOUR:
+                return 2;
+            case FIVE:
+                return 1;
+        }
+        return 0;
+    }
 }
