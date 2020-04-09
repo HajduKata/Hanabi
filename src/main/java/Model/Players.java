@@ -16,7 +16,7 @@ public class Players {
     private static final int MAX_NUMBER_OF_PLAYERS = 5;
 
     private static List<Player> players;
-    private static int playerIndex =0;
+    private static int playerIndex = 0;
 
     public static int numberOfPlayers;
 
@@ -26,7 +26,7 @@ public class Players {
 
     public static Player nextPlayer() {
         playerIndex++;
-        if (playerIndex>=numberOfPlayers) {
+        if (playerIndex >= numberOfPlayers) {
             playerIndex = 0;
         }
         return players.get(playerIndex);
@@ -41,7 +41,7 @@ public class Players {
         players = new ArrayList<>(numberOfPlayers);
         //Initialize the human player
         Player human = new Player(HUMAN);
-        if(!name.equals("")) {
+        if (!name.equals("")) {
             human.setName(name);
         }
         players.add(0, human); // human player is always the first indexed
@@ -51,6 +51,14 @@ public class Players {
             Player ai = new Player(AI);
             players.add(i, ai);
         }
+    }
+
+    public static int getPlayerIndex() {
+        return playerIndex;
+    }
+
+    public static Player getNextPlayer(int runningIndex) {
+        return players.get(runningIndex);
     }
 
 }

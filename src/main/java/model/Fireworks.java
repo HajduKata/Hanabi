@@ -77,7 +77,12 @@ public class Fireworks {
 
     public boolean isPlayable(Card card) {
         int index = card.getColor().ordinal();
-        return fireworks[index].getNumber().next() == card.getNumber();
+        if (fireworks[index].getNumber() == CardNumber.ZERO && card.getNumber() == CardNumber.ONE) {
+            return true;
+        } else if (fireworks[index].getNumber().next() == card.getNumber()) {
+            return true;
+        }
+        return false;
     }
 
     public boolean numberCanBePlayed(CardNumber number) {

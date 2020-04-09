@@ -2,7 +2,7 @@ package model;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -33,7 +33,7 @@ public class Card implements Comparable<Card> {
     public boolean knownNumber;
     private SortedMap<CardColor, Boolean> assumedColor;
     private SortedMap<CardNumber, Boolean> assumedNumber;
-
+    public int[][] possibilityTable;
 
     /**
      * Constructor for card with only color for empty card place.
@@ -43,18 +43,7 @@ public class Card implements Comparable<Card> {
     public Card(CardColor cardColor) {
         this.cardColor = cardColor;
         this.cardNumber = CardNumber.ZERO;
-        this.knownColor = false;
-        this.knownNumber = false;
-        this.selected = false;
-
-        assumedColor = new TreeMap<>();
-        for (CardColor color : CardColor.values()) {
-            assumedColor.put(color, true);
-        }
-        assumedNumber = new TreeMap<>();
-        for (CardNumber number : CardNumber.values()) {
-            assumedNumber.put(number, true);
-        }
+        initCard();
     }
 
     /**
@@ -66,13 +55,18 @@ public class Card implements Comparable<Card> {
     public Card(CardColor cardColor, CardNumber cardNumber) {
         this.cardColor = cardColor;
         this.cardNumber = cardNumber;
-        this.knownColor = false;
-        this.knownNumber = false;
-        this.selected = false;
 
         String cardFilename = cardColor.getValue() + cardNumber.getValue();
         URL imageURL = Objects.requireNonNull(classLoader.getResource("hanabi_cards/" + cardFilename + ".png"));
-        this.image = loadImage(imageURL);
+        image = loadImage(imageURL);
+
+        initCard();
+    }
+
+    private void initCard() {
+        knownColor = false;
+        knownNumber = false;
+        selected = false;
 
         assumedColor = new TreeMap<>();
         for (CardColor color : CardColor.values()) {
@@ -81,6 +75,27 @@ public class Card implements Comparable<Card> {
         assumedNumber = new TreeMap<>();
         for (CardNumber number : CardNumber.values()) {
             assumedNumber.put(number, true);
+        }
+
+        possibilityTable = new int[CardColor.values().length][CardNumber.values().length];
+        for(CardColor color : CardColor.values()) {
+            for (CardNumber number : CardNumber.values()) {
+                switch (cardNumber) {
+                    case ZERO:
+                        possibilityTable[color.ordinal()][number.ordinal()] = 0;
+                    case ONE:
+                        possibilityTable[color.ordinal()][number.ordinal()] = 3;
+                        break;
+                    case TWO:
+                    case THREE:
+                    case FOUR:
+                        possibilityTable[color.ordinal()][number.ordinal()] = 2;
+                        break;
+                    case FIVE:
+                        possibilityTable[color.ordinal()][number.ordinal()] = 1;
+                        break;
+                }
+            }
         }
     }
 
@@ -102,6 +117,26 @@ public class Card implements Comparable<Card> {
             this.y += 10;
             this.selected = false;
         }
+    }
+
+    public ArrayList<CardColor> countAssumedColor() {
+        ArrayList<CardColor> listOfColors = new ArrayList<>();
+        for (CardColor color : this.getAssumedColor().keySet()) {
+            if (this.getAssumedColor().get(color).equals(true)) {
+                listOfColors.add(color);
+            }
+        }
+        return listOfColors;
+    }
+
+    public ArrayList<CardNumber> countAssumedNumber() {
+        ArrayList<CardNumber> listOfNumbers = new ArrayList<>();
+        for (CardNumber number : this.getAssumedNumber().keySet()) {
+            if (this.getAssumedColor().get(number).equals(true)) {
+                listOfNumbers.add(number);
+            }
+        }
+        return listOfNumbers;
     }
 
     public int getX() {

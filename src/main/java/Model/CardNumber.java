@@ -15,6 +15,8 @@ public enum CardNumber {
 
     public CardNumber next() {
         switch (this) {
+            case ZERO:
+                return ONE;
             case ONE:
                 return TWO;
             case TWO:

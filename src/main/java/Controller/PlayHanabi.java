@@ -92,6 +92,7 @@ public class PlayHanabi implements ImageObserver {
     public void playerTurn(Player actualPlayer) {
         // AI logic comes here
         if (actualPlayer.isAIPlayer()) {
+            aiController.updatePossibilityTable(actualPlayer);
             aiController.chooseAction(actualPlayer);
 
             actualPlayer.setTheirTurn(false);

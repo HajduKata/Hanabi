@@ -77,9 +77,12 @@ public class ControlPanel extends JPanel {
         playCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         JLabel discardCardLabel = new JLabel("Dobj el a kezedből egy lapot");
         discardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        JLabel cannotDiscardCardLabel = new JLabel("Maximális utalásjelződ van.");
+        cannotDiscardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         extensionPanel.add(defaultLabel, "default");
         extensionPanel.add(playCardLabel, "play");
         extensionPanel.add(discardCardLabel, "discard");
+        extensionPanel.add(cannotDiscardCardLabel, "cannotDiscard");
         extensionPanel.add(setSelectedHint(SelectedSymbol.getSelectedSymbol()), "hint");
 
         this.add(controlButtonsContainer);
@@ -115,12 +118,17 @@ public class ControlPanel extends JPanel {
         isDiscardACard = true;
         isPlayACard = false;
         resetAllCards();
-        cardLayout.show(extensionPanel, "discard");
+        if(Tokens.getTokens().getClues() >= 8) {
+            cardLayout.show(extensionPanel, "cannotDiscard");
+        } else {
+            cardLayout.show(extensionPanel, "discard");
+        }
     }
 
     private void showHintButtons(CardLayout cardLayout, JPanel extensionPanel) {
         isDiscardACard = false;
         isPlayACard = false;
+        resetAllCards();
         if (Tokens.getTokens().getClues() > 0) {
             cardLayout.show(extensionPanel, "hint");
         } else {

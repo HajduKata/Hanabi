@@ -135,7 +135,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // When player discards a card
-        if (/*this.getPlayer().isHumanPlayer() &&*/ controlPanel.isDiscardACard) {
+        if (/*this.getPlayer().isHumanPlayer() &&*/ controlPanel.isDiscardACard && Tokens.getTokens().getClues() < 8) {
             Card clickedCard = new Card(CardColor.RED);
             for (Card card : this.getPlayer().getHand().cards) {
                 if (card.getX() == xOfLastCard) {
