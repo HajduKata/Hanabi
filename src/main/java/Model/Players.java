@@ -53,12 +53,24 @@ public class Players {
         }
     }
 
+    public static void setupTestPlayers(int numberOfPlayers) {
+        assert numberOfPlayers >= MIN_NUMBER_OF_PLAYERS;
+        assert numberOfPlayers <= MAX_NUMBER_OF_PLAYERS;
+        Players.numberOfPlayers = numberOfPlayers;
+        players = new ArrayList<>(numberOfPlayers);
+        //Initialize all the AI players
+        for (int i = 0; i < numberOfPlayers; i++) {
+            Player ai = new Player(AI);
+            players.add(i, ai);
+        }
+    }
+
     public static int getPlayerIndex() {
         return playerIndex;
     }
 
-    public static Player getNextPlayer(int runningIndex) {
-        return players.get(runningIndex);
+    public static Player getIndexPlayer(int index) {
+        return players.get(index);
     }
 
 }

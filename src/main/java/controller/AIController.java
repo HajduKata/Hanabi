@@ -12,15 +12,13 @@ import model.Player;
 import model.Players;
 import model.Tokens;
 
-import javax.swing.JOptionPane;
-
 import java.util.ArrayList;
 
 import static view.PlayerPanel.drawNewCard;
 
 public class AIController {
-    private CardColor actualColor;
-    private CardNumber actualNumber;
+    private CardColor hintColor;
+    private CardNumber hintNumber;
     private int numberOfPlayers;
 
 
@@ -42,18 +40,20 @@ public class AIController {
         7. Discard card c1.
         */
 
-        actualColor = null;
-        actualNumber = null;
+        hintColor = null;
+        hintNumber = null;
 
         // 1. Play the playable card with lowest index.
         if (canPlayACard(thisPlayer.getHand())) {
             playACard(thisPlayer, whatCardToPlay(thisPlayer.getHand()));
-            JOptionPane.showMessageDialog(null, playerName + " kijátszott egy kártyát.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
-        } // 2. If there are less than 5 cards in the discard pile, discard the dead card with lowest index.
+//            JOptionPane.showMessageDialog(null, playerName + " kijátszott egy kártyát.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
+        }
+        /*// 2. If there are less than 5 cards in the discard pile, discard the dead card with lowest index.
         else if (DiscardedCards.getDiscard().getNumberOfDiscardedCards() < 5 && canDiscardADeadCard(thisPlayer.getHand()) && Tokens.getTokens().getClues() < 8) {
-            discardADeadCard(thisPlayer, whatDeadCardToDiscard(thisPlayer.getHand()));
+            discardACard(thisPlayer, whatDeadCardToDiscard(thisPlayer.getHand()));
             JOptionPane.showMessageDialog(null, playerName + " eldobott egy lapot.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
-        } // 3. If there are hint tokens available, give a hint.
+        }*/
+        // 3. If there are hint tokens available, give a hint.
         else if (Tokens.getTokens().getClues() > 0) {
             Player giveHint = whichPlayerToGiveHintToPlayACard(thisPlayer);
             if (giveHint != null) {
@@ -64,31 +64,43 @@ public class AIController {
                 whatHintToGiveToDiscardACard(giveHint.getHand());
                 giveHint(giveHint);
             }
-            JOptionPane.showMessageDialog(null, playerName + " utalást adott.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
+//            JOptionPane.showMessageDialog(null, playerName + " utalást adott.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
         } // 4. Discard the dead card with lowest index.
         else if (canDiscardADeadCard(thisPlayer.getHand())) {
-            discardADeadCard(thisPlayer, whatDeadCardToDiscard(thisPlayer.getHand()));
-            JOptionPane.showMessageDialog(null, playerName + " eldobott egy lapot.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
+            discardACard(thisPlayer, whatDeadCardToDiscard(thisPlayer.getHand()));
+//            JOptionPane.showMessageDialog(null, playerName + " eldobott egy lapot.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
         } // 7. Discard card c1.
-        //TODO Supposed to discard the card with the lowest index, if they have no dead cards
         else {
-            JOptionPane.showMessageDialog(null, playerName + " semmit se csinááát.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
+            discardACard(thisPlayer, thisPlayer.getHand().cards.get(0));
+//            JOptionPane.showMessageDialog(null, playerName + " eldobta a legrégebbi lapját.", playerName + " köre", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     private boolean canPlayACard(Hand hand) {
+        // If both Color and Number is known of the card
         for (Card card : hand.cards) {
-            // If both Color and Number is known of the card
             if (card.knownNumber && card.knownColor) {
                 if (Fireworks.getFireworks().isPlayable(card)) {
                     return true;
                 }
-            } // If only Number is known of the card
-            else if (card.knownNumber) {
+            }
+        }
+        // If only Number is known of the card
+        for (Card card : hand.cards) {
+            if (card.knownNumber) {
                 // If there is still some of that number to be played
                 // TODO giveHint nem figyel rá hogy ne mutasson meg duplikátumokat
                 if (Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
-                    return true;
+                    int playableCounter = 0;
+                    for (CardColor color : CardColor.values()) {
+                        if(Fireworks.getFireworks().isPlayable(new Card(color, card.getNumber())) && card.possibilityTable[color.ordinal()][card.getNumber().ordinal()] > 0) {
+//                            HanabiCards.DECK.howManyOfThatNumberInDeck(card.getNumber());
+                            playableCounter++;
+                        }
+                    }
+                    if(playableCounter>0) {
+                        return true;
+                    }
 
                     /*// How many of the assumed colors can be played
                     int counter = 0;
@@ -102,8 +114,11 @@ public class AIController {
                         return true;
                     } // Else look at the other people's cards*/
                 }
-            } // If only Color is known of the card
-            else if (card.knownColor) {
+            }
+        }
+        // If only Color is known of the card
+        for (Card card : hand.cards) {
+            if (card.knownColor) {
                 // If this is the only card that has knownColor of the shown color
                 int counter = 0;
                 for (Card counterCard : hand.cards) {
@@ -124,22 +139,27 @@ public class AIController {
 
     private Card whatCardToPlay(Hand hand) {
         Card cardToPlay = null;
+        // If both Color and Number is known of the card
         for (Card card : hand.cards) {
-            // If both Color and Number is known of the card
             if (card.knownNumber && card.knownColor) {
                 if (Fireworks.getFireworks().isPlayable(card)) {
-                    cardToPlay = card;
-                    break;
+                    return card;
                 }
-            } // If only Number is known of the card
-            else if (card.knownNumber) {
+            }
+        }
+        // If only Number is known of the card
+        for (Card card : hand.cards) {
+            if (card.knownNumber) {
                 // If there is still some of that number to be played
                 if (Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
                     cardToPlay = card;
                     break;
                 }
-            } // If only Color is known of the card
-            else if (card.knownColor) {
+            }
+        }
+        // If only Color is known of the card
+        for (Card card : hand.cards) {
+            if (card.knownColor) {
                 // If this is the only card that has knownColor of the shown color
                 int counter = 0;
                 for (Card counterCard : hand.cards) {
@@ -235,7 +255,7 @@ public class AIController {
         return cardToBeDiscarded;
     }
 
-    private void discardADeadCard(Player player, Card cardToBeDiscarded) {
+    private void discardACard(Player player, Card cardToBeDiscarded) {
         // Check if the card we want to discard is in the hand of the player
         for (Card card : player.getHand().cards) {
             if (card.getColor().equals(cardToBeDiscarded.getColor()) && card.getNumber().equals(cardToBeDiscarded.getNumber())) {
@@ -271,24 +291,35 @@ public class AIController {
      * if the player has a not essential card
      */
     private Player whichPlayerToGiveHintToPlayACard(Player thisPlayer) {
-        int index = Players.getPlayerIndex();
-        increaseAndCheckIndex(index);
-        Player player = null;
-        Player iteratePlayer = Players.getNextPlayer(index);
+        int index = increaseAndCheckIndex(Players.getPlayerIndex());
+        Player playerToGiveHint = null;
+        Player iteratePlayer = Players.getIndexPlayer(index);
+        int maxPlayable = 0;
         while (!iteratePlayer.equals(thisPlayer)) {
-            // If the player has at least one playable card in hand
-            //TODO meg van-e már mutatva a játékosnak?
-            if (howManyPlayableCardsInHand(iteratePlayer.getHand()) >= 1) {
-                player = iteratePlayer;
+            int iteratePlayable = howManyPlayableCardsInHand(iteratePlayer.getHand());
+            // If the player has the most playable cards in hand
+            if (iteratePlayable > maxPlayable) {
+                // If the player already has all cards shown to him that can be played, skip to the next player
+                if (playerAlreadyHasClues(iteratePlayer.getHand())) {
+                    index = increaseAndCheckIndex(index);
+                    iteratePlayer = Players.getIndexPlayer(index);
+                    continue;
+                }
+                maxPlayable = iteratePlayable;
+                playerToGiveHint = iteratePlayer;
             }
-            increaseAndCheckIndex(index);
-            iteratePlayer = Players.getNextPlayer(index);
+            index = increaseAndCheckIndex(index);
+            iteratePlayer = Players.getIndexPlayer(index);
         }
-        /*else if (howManyPlayableCardsInHand(player.getHand()) > 1 && player != Players.getNextPlayer() && Tokens.getTokens().getClues() >= Players.numberOfPlayers) {
+        // If all players have something shown to them already, give hint to the next player
+        if (playerToGiveHint == null) {
+            playerToGiveHint = Players.getIndexPlayer(increaseAndCheckIndex(index));
+        }
+        /*else if (howManyPlayableCardsInHand(player.getHand()) > 1 && player != Players.getIndexPlayer() && Tokens.getTokens().getClues() >= Players.numberOfPlayers) {
             playerToGiveHint = player;
             break;
         }*/
-        return player;
+        return playerToGiveHint;
     }
 
     private int howManyPlayableCardsInHand(Hand hand) {
@@ -301,18 +332,31 @@ public class AIController {
         return counter;
     }
 
+    private boolean playerAlreadyHasClues(Hand hand) {
+        int playableCounter = 0;
+        int shownCounter = 0;
+        for (Card card : hand.cards) {
+            if (Fireworks.getFireworks().isPlayable(card)) {
+                playableCounter++;
+            }
+            if (card.knownColor || card.knownNumber) {
+                shownCounter++;
+            }
+        }
+        return playableCounter == shownCounter;
+    }
+
     private Player whichPlayerToGiveHintToDiscardACard(Player thisPlayer) {
-        int index = Players.getPlayerIndex();
-        increaseAndCheckIndex(index);
+        int index = increaseAndCheckIndex(Players.getPlayerIndex());
         Player player = null;
-        Player iteratePlayer = Players.getNextPlayer(index);
+        Player iteratePlayer = Players.getIndexPlayer(index);
         while (!iteratePlayer.equals(thisPlayer)) {
             // If the player can discard
             if (playerCanDiscardACard(iteratePlayer.getHand())) {
                 player = iteratePlayer;
             }
-            increaseAndCheckIndex(index);
-            iteratePlayer = Players.getNextPlayer(index);
+            index = increaseAndCheckIndex(index);
+            iteratePlayer = Players.getIndexPlayer(index);
         }
         return player;
     }
@@ -343,47 +387,133 @@ public class AIController {
     }
 
     private void whatHintToGiveToPlayACard(Hand hand) {
-        actualColor = null;
-        actualNumber = null;
+        hintColor = null;
+        hintNumber = null;
+        // Number showing cycle * and sometimes color, depending
         for (Card card : hand.cards) {
-            // 1. recommendation
-            if (card.getNumber().equals(CardNumber.FIVE) && Fireworks.getFireworks().isPlayable(card)) {
-                checkWhatIsShowable(hand, card);
-                break;
-            } // 2. recommendation
-            else if (card.getNumber().equals(CardNumber.ONE) && Fireworks.getFireworks().isPlayable(card)) {
-                checkWhatIsShowable(hand, card);
-                break;
-            } else if (card.getNumber().equals(CardNumber.TWO) && Fireworks.getFireworks().isPlayable(card)) {
-                checkWhatIsShowable(hand, card);
-                break;
-            } else if (card.getNumber().equals(CardNumber.THREE) && Fireworks.getFireworks().isPlayable(card)) {
-                checkWhatIsShowable(hand, card);
-                break;
-            } else if (card.getNumber().equals(CardNumber.FOUR) && Fireworks.getFireworks().isPlayable(card)) {
-                checkWhatIsShowable(hand, card);
-                break;
-            } // 2/b. recommendation
-            else if (card.getNumber().equals(CardNumber.FIVE)) {
-                checkWhatIsShowable(hand, card);
-                break;
+            // If the number hasn't been shown yet
+            if (!card.knownNumber) {
+                // 1. recommendation
+                if (card.getNumber().equals(CardNumber.FIVE) && Fireworks.getFireworks().isPlayable(card)) {
+                    if (checkWhatIsShowable(hand, card)) {
+                        break;
+                    }
+                } // 2. recommendation
+                else if (card.getNumber().equals(CardNumber.ONE) && Fireworks.getFireworks().isPlayable(card)) {
+                    if (checkWhatIsShowable(hand, card)) {
+                        break;
+                    }
+                } else if (card.getNumber().equals(CardNumber.TWO) && Fireworks.getFireworks().isPlayable(card)) {
+                    if (checkWhatIsShowable(hand, card)) {
+                        break;
+                    }
+                } else if (card.getNumber().equals(CardNumber.THREE) && Fireworks.getFireworks().isPlayable(card)) {
+                    if (checkWhatIsShowable(hand, card)) {
+                        break;
+                    }
+                } else if (card.getNumber().equals(CardNumber.FOUR) && Fireworks.getFireworks().isPlayable(card)) {
+                    if (checkWhatIsShowable(hand, card)) {
+                        break;
+                    }
+                }
+            }
+        }
+        // Color showing cycle if number hasn't been chosen to be shown
+        if (hintNumber == null) {
+            for (Card card : hand.cards) {
+                if (!card.knownColor) {
+                    // 1. recommendation
+                    if (card.getNumber().equals(CardNumber.FIVE) && Fireworks.getFireworks().isPlayable(card)) {
+                        hintColor = card.getColor();
+                        break;
+                    } // 2. recommendation
+                    else if (card.getNumber().equals(CardNumber.ONE) && Fireworks.getFireworks().isPlayable(card)) {
+                        hintColor = card.getColor();
+                        break;
+                    } else if (card.getNumber().equals(CardNumber.TWO) && Fireworks.getFireworks().isPlayable(card)) {
+                        hintColor = card.getColor();
+                        break;
+                    } else if (card.getNumber().equals(CardNumber.THREE) && Fireworks.getFireworks().isPlayable(card)) {
+                        hintColor = card.getColor();
+                        break;
+                    } else if (card.getNumber().equals(CardNumber.FOUR) && Fireworks.getFireworks().isPlayable(card)) {
+                        hintColor = card.getColor();
+                        break;
+                    }
+                }
             }
         }
     }
 
+    private boolean checkWhatIsShowable(Hand hand, Card card) {
+        // If there is only one of the number to be showed
+        if (symbolCounter(hand, null, card.getNumber()) == 1 && !card.knownNumber) {
+            hintNumber = card.getNumber();
+            return true;
+        } else {
+            // If all cards with that number can be played
+            if (areAllSymbolsPlayable(hand, null, card.getNumber())) {
+                for (Card actualCard : hand.cards) {
+                    // If there is at least one, that hasn't been shown yet
+                    if (card.getNumber().equals(actualCard.getNumber()) && !actualCard.knownNumber) {
+                        hintNumber = card.getNumber();
+                        return true;
+                    }
+                }
+            } // If the card is the only one of that color
+            else if (symbolCounter(hand, card.getColor(), null) == 1) {
+                hintColor = card.getColor();
+            } // If all cards with that color can be played
+            else if (areAllSymbolsPlayable(hand, card.getColor(), null)) {
+                for (Card actualCard : hand.cards) {
+                    // If there is at least one, that hasn't been shown yet
+                    if (card.getColor().equals(actualCard.getColor()) && !actualCard.knownColor) {
+                        hintColor = card.getColor();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private int symbolCounter(Hand hand, CardColor color, CardNumber number) {
+        int counter = 0;
+        for (Card card : hand.cards) {
+            if (card.getColor().equals(color) || card.getNumber().equals(number)) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    private boolean areAllSymbolsPlayable(Hand hand, CardColor color, CardNumber number) {
+        for (Card card : hand.cards) {
+            if ((card.getColor().equals(color) || card.getNumber().equals(number))
+                    && !Fireworks.getFireworks().isPlayable(card)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void whatHintToGiveToDiscardACard(Hand hand) {
-        actualColor = null;
-        actualNumber = null;
+        hintColor = null;
+        hintNumber = null;
         for (Card card : hand.cards) {
             // 3. recommendation
             if (Fireworks.getFireworks().isDeadCard(card)) {
                 if (Fireworks.getFireworks().howManyOfThatNumberPlayed(card.getNumber()) == CardColor.values().length) {
                     //TODO checkWhatIsShowable-hoz hasonlóan megnézni meg volt-e mutatva már
-                    actualNumber = card.getNumber();
+                    hintNumber = card.getNumber();
                 } else if (Fireworks.getFireworks().howManyOfThatColorPlayed(card.getColor()) == 5) {
-                    actualColor = card.getColor();
+                    hintColor = card.getColor();
                 }
-            } // 4. recommendation
+            }  // 3/b. recommendation
+            else if (card.getNumber().equals(CardNumber.FIVE) && !card.knownNumber) {
+                hintNumber = card.getNumber();
+                break;
+            }// 4. recommendation
         }
     }
 
@@ -392,8 +522,8 @@ public class AIController {
          * The recommendation for a hand will be determined with following priority:
          * 1. Recommend that the playable card of rank 5 with lowest index be played.
          * 2. Recommend that the playable card with lowest rank be played. If there is a tie for lowest rank, recommend the one with lowest index.
-         * 2/b. Recommend 5 to be safe and not discard it accidentally.
          * 3. Recommend that the dead card with lowest index be discarded.
+         * 3/b. Recommend 5 to be safe and not discard it accidentally.
          * 4. Recommend that the card with highest rank that is not indispensable be discarded. If there is a tie, recommend the one with lowest index.
          * 5. Recommend that c1 be discarded.
          */
@@ -401,9 +531,9 @@ public class AIController {
 
         // Give a hint to the player
         for (Card card : hand.cards) {
-            if (actualColor != null) {
+            if (hintColor != null) {
                 // If the card is the same color as the clue given
-                if (card.getColor().equals(actualColor)) {
+                if (card.getColor().equals(hintColor)) {
                     card.knownColor = true;
                     card.setAssumedColor(card.getColor(), true);
                     // The possibility table of the card sets all other colors "false", 0
@@ -426,9 +556,9 @@ public class AIController {
                         }
                     }
                 }
-            } else if (actualNumber != null) {
+            } else if (hintNumber != null) {
                 // If the card is the same number as the clue given
-                if (card.getNumber().equals(actualNumber)) {
+                if (card.getNumber().equals(hintNumber)) {
                     card.knownNumber = true;
                     card.setAssumedNumber(card.getNumber(), true);
                     // The possibility table of the card sets all other numbers "false", 0
@@ -453,71 +583,13 @@ public class AIController {
                 }
             }
         }
-        if (actualNumber != null) {
-            History.getHistory().addString(player.getName(), "", History.getHistory().getHistoryNumber(actualNumber));
-            Tokens.getTokens().decreaseClues();
-        } else if (actualColor != null) {
-            History.getHistory().addString(player.getName(), History.getHistory().getHistoryColor(actualColor), "");
-            Tokens.getTokens().decreaseClues();
+        if (hintNumber != null) {
+            History.getHistory().addString(player.getName(), "", History.getHistory().getHistoryNumber(hintNumber));
+//            Tokens.getTokens().decreaseClues();
+        } else if (hintColor != null) {
+            History.getHistory().addString(player.getName(), History.getHistory().getHistoryColor(hintColor), "");
         }
-    }
-
-    private void checkWhatIsShowable(Hand hand, Card card) {
-        // If there is only one of the number to be showed
-        if (symbolCounter(hand, null, card.getNumber()) == 1 && !checkIfNumberHasBeenShown(card)) {
-            actualNumber = card.getNumber();
-        } else {
-            // If all cards with that number can be played
-            if (areAllSymbolsPlayable(hand, null, card.getNumber())) {
-                for (Card actualCard : hand.cards) {
-                    // If there is at least one, that hasn't been shown yet
-                    if (card.getNumber().equals(actualCard.getNumber()) && !checkIfNumberHasBeenShown(actualCard)) {
-                        actualNumber = card.getNumber();
-                        break;
-                    }
-                }
-            } // If the card is the only one of that color
-            else if (symbolCounter(hand, card.getColor(), null) == 1) {
-                actualColor = card.getColor();
-            } // If all cards with that color can be played
-            else if (areAllSymbolsPlayable(hand, card.getColor(), null)) {
-                for (Card actualCard : hand.cards) {
-                    // If there is at least one, that hasn't been shown yet
-                    if (card.getColor().equals(actualCard.getColor()) && !checkIfColorHasBeenShown(actualCard)) {
-                        actualColor = card.getColor();
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private int symbolCounter(Hand hand, CardColor color, CardNumber number) {
-        int counter = 0;
-        for (Card card : hand.cards) {
-            if (card.getColor().equals(color) || card.getNumber().equals(number)) {
-                counter++;
-            }
-        }
-        return counter;
-    }
-
-    private boolean areAllSymbolsPlayable(Hand hand, CardColor color, CardNumber number) {
-        for (Card card : hand.cards) {
-            if ((card.getColor().equals(color) || card.getNumber().equals(number))
-                    && !Fireworks.getFireworks().isPlayable(card)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean checkIfColorHasBeenShown(Card card) {
-        return card.knownColor;
-    }
-
-    private boolean checkIfNumberHasBeenShown(Card card) {
-        return card.knownNumber;
+        Tokens.getTokens().decreaseClues();
     }
 
     void updatePossibilityTable(Player thisPlayer) {
@@ -581,6 +653,7 @@ public class AIController {
     }
 
     private int increaseAndCheckIndex(int index) {
+        index++;
         if (index >= numberOfPlayers) {
             index = 0;
         }

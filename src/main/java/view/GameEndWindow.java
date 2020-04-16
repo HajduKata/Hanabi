@@ -13,17 +13,24 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GameWonWindow extends JFrame implements ActionListener {
+public class GameEndWindow extends JFrame implements ActionListener {
     private GameTable gameTable;
     private JButton newGameButton;
     private JButton exitGameButton;
     public Boolean done = null;
 
-    public GameWonWindow(int points, GameTable gameTable) {
+    public GameEndWindow(int points, GameTable gameTable, boolean won) {
         this.gameTable = gameTable;
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Győzelem!");
+        String endGameText = null;
+        if (won) {
+            this.setTitle("Győzelem!");
+            endGameText = "Gratulálunk! " + points + " pontot szereztél!";
+        } else {
+            this.setTitle("Vereség");
+            endGameText = "Sajnos elvesztetted az összes életedet!";
+        }
         this.setSize(new Dimension(300, 200));
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(null);
@@ -31,8 +38,7 @@ public class GameWonWindow extends JFrame implements ActionListener {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-        String winningText = "Gratulálunk! " + points + " pontot szereztél!";
-        JLabel nameLabel = new JLabel(winningText);
+        JLabel nameLabel = new JLabel(endGameText);
         mainPanel.add(nameLabel);
 
         this.add(new Panel(), BorderLayout.PAGE_START);

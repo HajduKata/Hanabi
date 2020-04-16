@@ -99,4 +99,13 @@ public class Player {
     public void setTheirTurn(boolean theirTurn) {
         this.theirTurn = theirTurn;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Player)) {
+            return false;
+        }
+        Player player = (Player) obj;
+        return this.name.equals(player.name);
+    }
 }

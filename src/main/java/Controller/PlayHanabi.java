@@ -7,11 +7,10 @@ import model.Players;
 import model.Tokens;
 import view.GameLostWindow;
 import view.GameTable;
-import view.GameWonWindow;
+import view.GameEndWindow;
 import view.SetupWindow;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.awt.Image;
 import java.awt.image.ImageObserver;
 import java.util.concurrent.TimeUnit;
@@ -62,31 +61,27 @@ public class PlayHanabi implements ImageObserver {
             }
         }
 
-        //TODO játék végi kiértékelés
-        //TODO csúnyán néz ki, és nem működik a játék indítás gomb
         if(Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
-            GameWonWindow gameWonWindow = new GameWonWindow(Fireworks.getFireworks().getNumberOfCardsPlayed(), table);
-            while(gameWonWindow.done == null) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return gameWonWindow.done;
+            GameEndWindow gameEndWindow = new GameEndWindow(Fireworks.getFireworks().getNumberOfCardsPlayed(), table, true);
+            waitForDone(gameEndWindow);
+            return gameEndWindow.done;
         }
-        if(Tokens.getTokens().getLife() == 0) {
-            GameLostWindow gameLostWindow = new GameLostWindow(table);
-            while(gameLostWindow.done == null) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return gameLostWindow.done;
+        else if(Tokens.getTokens().getLife() == 0) {
+            GameEndWindow gameEndWindow = new GameEndWindow(Fireworks.getFireworks().getNumberOfCardsPlayed(), table, false);
+            waitForDone(gameEndWindow);
+            return gameEndWindow.done;
         }
         return false;
+    }
+
+    private void waitForDone(GameEndWindow gameEndWindow) {
+        while(gameEndWindow.done == null) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void playerTurn(Player actualPlayer) {

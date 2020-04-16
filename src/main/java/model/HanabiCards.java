@@ -70,4 +70,8 @@ public enum HanabiCards {
         }
         return 0;
     }
+
+    public static List<Card> getCards() {
+        return cards;
+    }
 }
