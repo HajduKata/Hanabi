@@ -21,7 +21,6 @@ public class AIController {
     private CardNumber hintNumber;
     private int numberOfPlayers;
 
-
     AIController(int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
     }
@@ -463,6 +462,7 @@ public class AIController {
             } // If the card is the only one of that color
             else if (symbolCounter(hand, card.getColor(), null) == 1) {
                 hintColor = card.getColor();
+                return true;
             } // If all cards with that color can be played
             else if (areAllSymbolsPlayable(hand, card.getColor(), null)) {
                 for (Card actualCard : hand.cards) {

@@ -18,8 +18,8 @@ public class HanabiMain {
         */
 
         // Test Games
-        int numberOfTests = 10;
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd.HH-mm-ss");
+        int numberOfTests = 100;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd. HH-mm-ss");
         String fileName = "Test_" + dtf.format(LocalDateTime.now()) + ".csv";
         FileWriter fileWriter = null;
         try {

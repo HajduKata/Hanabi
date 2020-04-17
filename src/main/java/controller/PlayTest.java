@@ -13,10 +13,11 @@ import view.GameTable;
 public class PlayTest {
     private boolean gameEnd = false;
     private GameTable table;
-    private AIController aiController;
+    private AIPlayer aiPlayer;
 
     public PlayTest(int numberOfPlayers) {
-        aiController = new AIController(numberOfPlayers);
+        aiPlayer = new AIPlayer(numberOfPlayers);
+
         initGame(numberOfPlayers);
     }
 
@@ -62,8 +63,8 @@ public class PlayTest {
 
     private void playerTurn(Player actualPlayer) {
         // AI logic comes here
-        aiController.updatePossibilityTable(actualPlayer);
-        aiController.chooseAction(actualPlayer);
+        //aiController.updatePossibilityTable(actualPlayer);
+        aiPlayer.chooseAction(actualPlayer);
 
         actualPlayer.setTheirTurn(false);
     }
