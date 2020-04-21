@@ -31,17 +31,22 @@ public enum CardNumber {
     }
 
     /**
-     * If @this is higher than @number, return true
+     * If @number is lower or equal than @this, return true
      */
-    public boolean isHigher(CardNumber number) {
-        if(this.equals(ONE) && !number.equals(ONE)) {
-            return true;
-        } else if(this.equals(TWO) && (!number.equals(ONE) || !number.equals(TWO))) {
-            return true;
-        } else if(this.equals(THREE) && (!number.equals(ONE) || !number.equals(TWO) || !number.equals(THREE))) {
-            return true;
-        } else if(this.equals(FOUR) && (!number.equals(ONE) || !number.equals(TWO) || !number.equals(THREE) || !number.equals(FOUR))) {
-            return true;
-        } else return this.equals(FIVE);
+    public boolean isLowerOrEqual(CardNumber number) {
+        switch (this) {
+            case ONE:
+                return number.equals(ONE) || number.equals(TWO) || number.equals(THREE) || number.equals(FOUR) || number.equals(FIVE);
+            case TWO:
+                return number.equals(TWO) || number.equals(THREE) || number.equals(FOUR) || number.equals(FIVE);
+            case THREE:
+                return number.equals(THREE) || number.equals(FOUR) || number.equals(FIVE);
+            case FOUR:
+                return number.equals(FOUR) || number.equals(FIVE);
+            case FIVE:
+                return number.equals(FIVE);
+            default:
+                return true;
+        }
     }
 }

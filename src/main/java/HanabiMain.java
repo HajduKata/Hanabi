@@ -18,9 +18,9 @@ public class HanabiMain {
         */
 
         // Test Games
-        int numberOfTests = 100;
+        int numberOfTests = 1000;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd. HH-mm-ss");
-        String fileName = "Test_" + dtf.format(LocalDateTime.now()) + ".csv";
+        String fileName = "Test_" + numberOfTests + "_" + dtf.format(LocalDateTime.now()) + ".csv";
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(fileName);
@@ -31,7 +31,7 @@ public class HanabiMain {
         PrintWriter printWriter = new PrintWriter(fileWriter);
         for (int numberOfPlayers = 2; numberOfPlayers <= 5; numberOfPlayers++) {
             for (int i = 0; i < numberOfTests; i++) {
-                PlayTest playTest = new PlayTest(numberOfPlayers);
+                PlayTest playTest = new PlayTest(numberOfPlayers, true);
                 printWriter.println(playTest.play());
             }
         }

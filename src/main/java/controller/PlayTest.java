@@ -14,9 +14,11 @@ public class PlayTest {
     private boolean gameEnd = false;
     private GameTable table;
     private AIPlayer aiPlayer;
+    private boolean isTest;
 
-    public PlayTest(int numberOfPlayers) {
-        aiPlayer = new AIPlayer(numberOfPlayers);
+    public PlayTest(int numberOfPlayers, boolean isTest) {
+        this.isTest = isTest;
+        aiPlayer = new AIPlayer(numberOfPlayers, isTest);
 
         initGame(numberOfPlayers);
     }
@@ -33,7 +35,9 @@ public class PlayTest {
         HanabiCards.DECK.shuffle();
         Players.setupTestPlayers(numberOfPlayers);
 
-//        table = new GameTable();
+        if (!isTest) {
+            table = new GameTable();
+        }
     }
 
     public String play() {
@@ -65,7 +69,10 @@ public class PlayTest {
         // AI logic comes here
         //aiController.updatePossibilityTable(actualPlayer);
         aiPlayer.chooseAction(actualPlayer);
-
         actualPlayer.setTheirTurn(false);
+
+        if (!isTest) {
+            table.repaintAll();
+        }
     }
 }

@@ -89,6 +89,7 @@ public class AIController {
             if (card.knownNumber) {
                 // If there is still some of that number to be played
                 // TODO giveHint nem figyel rá hogy ne mutasson meg duplikátumokat
+                /*
                 if (Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
                     int playableCounter = 0;
                     for (CardColor color : CardColor.values()) {
@@ -101,7 +102,7 @@ public class AIController {
                         return true;
                     }
 
-                    /*// How many of the assumed colors can be played
+                    // How many of the assumed colors can be played
                     int counter = 0;
                     for (CardColor color : card.countAssumedColor()) {
                         if (Fireworks.getFireworks().isPlayable(new Card(color, card.getNumber()))) {
@@ -111,8 +112,9 @@ public class AIController {
                     // If all of the assumed colors can be played
                     if (counter == card.countAssumedColor().size()) {
                         return true;
-                    } // Else look at the other people's cards*/
+                    } // Else look at the other people's cards
                 }
+                */
             }
         }
         // If only Color is known of the card
@@ -150,10 +152,10 @@ public class AIController {
         for (Card card : hand.cards) {
             if (card.knownNumber) {
                 // If there is still some of that number to be played
-                if (Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
+                /*if (Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
                     cardToPlay = card;
                     break;
-                }
+                }*/
             }
         }
         // If only Color is known of the card
@@ -203,9 +205,9 @@ public class AIController {
             } // If only Number is known of the card
             else if (card.knownNumber) {
                 // If there is none of that number to be played
-                if (!Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
+                /*if (!Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
                     return true;
-                }
+                }*/
             } // If only Color is known of the card
             else if (card.knownColor) {
                 // If the fireworks of that color is already finished
@@ -234,10 +236,10 @@ public class AIController {
             } // If only Number is known of the card
             else if (card.knownNumber) {
                 // If there is none of that number to be played
-                if (!Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
+                /*if (!Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
                     cardToBeDiscarded = card;
                     break;
-                }
+                }*/
             } // If only Color is known of the card
             else if (card.knownColor) {
                 // If the fireworks of that color is already finished
@@ -369,7 +371,7 @@ public class AIController {
             // If it's a non-essential (duplicate) card
             int counter = 0;
             for (Card firework : Fireworks.getFireworks().getCards()) {
-                if (card.getColor() == firework.getColor() && card.getNumber().isHigher(firework.getNumber())) {
+                /*if (card.getColor() == firework.getColor() && card.getNumber().isHigher(firework.getNumber())) {
                     for (Card discardedCard : DiscardedCards.getDiscard().getCards().get(card.getColor())) {
                         if (discardedCard == card) {
                             counter++;
@@ -379,7 +381,7 @@ public class AIController {
                     if (counter == 0 && card.getNumber() != CardNumber.FIVE) {
                         return true;
                     }
-                }
+                }*/
             }
         }
         return false;

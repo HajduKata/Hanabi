@@ -42,7 +42,9 @@ public class Tokens {
     }
 
     public void increaseClues() {
-        clues++;
+        if(clues < 8) {
+            clues++;
+        }
     }
 
     public static void clearInstance() {
