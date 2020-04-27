@@ -42,4 +42,13 @@ public class Hand {
     public static int getNumberOfCardsInHand() {
         return numberOfCardsInHand;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        for (Card card : cards) {
+            string.append(card.getColor().name()).append(" ").append(card.getNumber().name()).append("\n");
+        }
+        return string.toString();
+    }
 }

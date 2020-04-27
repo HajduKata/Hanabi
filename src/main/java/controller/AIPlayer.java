@@ -59,9 +59,15 @@ public class AIPlayer {
             actionMessage = thisPlayer.getName() + " eldobott egy lapot.";
         }
 
-        // 5. Discard card c1.
+        // 5. Discard card c1 except if it's a 5.
         else {
-            discardACard(thisPlayer, thisPlayer.getHand().cards.get(0));
+            Card lastCard = thisPlayer.getHand().cards.get(0);
+            int index = 1;
+            while (index < thisPlayer.getHand().cards.size() && lastCard.knownNumber && lastCard.getNumber().equals(CardNumber.FIVE)) {
+                lastCard = thisPlayer.getHand().cards.get(index);
+                index++;
+            }
+            discardACard(thisPlayer, lastCard);
             actionMessage = thisPlayer.getName() + " eldobta a legrégebbi lapját.";
         }
 
@@ -79,8 +85,9 @@ public class AIPlayer {
                     cardToPlay = card;
                     break;
                 }
-            } // If only Number is known of the card and there is still some of that Number to be played
-            else if (card.knownNumber && Fireworks.getFireworks().howManyOfThatNumberPlayed(card.getNumber()) < CardColor.values().length) {
+            } // If only Number is known of the card and there is still some of that Number to be played next
+            // && Fireworks.getFireworks().howManyOfThatNumberPlayed(card.getNumber()) < CardColor.values().length
+            else if (card.knownNumber && isNextPlayable(card.getNumber())) {
                 cardToPlay = card;
                 break;
             } // If only Color is known of the card and there is still some of that Color to be played
@@ -99,6 +106,17 @@ public class AIPlayer {
             }
         }
         return cardToPlay;
+    }
+
+    private boolean isNextPlayable(CardNumber number) {
+        for (Card card : Fireworks.getFireworks().getCards()) {
+            if (card.getNumber().next() != null) {
+                if (card.getNumber().next().equals(number)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void playACard(Player player, Card cardToPlayed) {
@@ -233,12 +251,15 @@ public class AIPlayer {
         int index = increaseAndCheckIndex(Players.getPlayerIndex());
         Player playerToGiveHint = null;
         Player playerToDiscard = null;
+        Player playerWithFive = null;
         Player iteratePlayer = Players.getIndexPlayer(index);
         while (!iteratePlayer.equals(thisPlayer)) {
             // If the player has playable cards in hand and doesn't have all cards shown to him that can be played
             if (howManyPlayableCardsInHand(iteratePlayer.getHand()) > 0 && !playerAlreadyHasAllClues(iteratePlayer.getHand())) {
                 playerToGiveHint = iteratePlayer;
                 break;
+            } else if (playerHasFive(iteratePlayer.getHand()) && playerWithFive == null) {
+                playerWithFive = iteratePlayer;
             } // If the player has dead cards in hand and there hasn't been a player chosen yet
             else if (howManyDeadCardsInHand(iteratePlayer.getHand()) > 0 && playerToDiscard == null) {
                 playerToDiscard = iteratePlayer;
@@ -248,8 +269,10 @@ public class AIPlayer {
         }
         if (playerToGiveHint != null) {
             return playerToGiveHint;
-        } else {
+        } else if (playerToDiscard != null) {
             return playerToDiscard;
+        } else {
+            return playerWithFive;
         }
     }
 
@@ -295,6 +318,15 @@ public class AIPlayer {
         return index;
     }
 
+    private boolean playerHasFive(Hand hand) {
+        for (Card card : hand.cards) {
+            if (card.getNumber().equals(CardNumber.FIVE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean whatHintToGive(Player thisPlayer, Player playerToGiveHintTo, Symbol hintSymbol) {
         /*
          * The recommendation for a hand will be determined with following priority:
@@ -311,8 +343,9 @@ public class AIPlayer {
             for (Card card : playerToGiveHintTo.getHand().cards) {
                 if (Fireworks.getFireworks().isPlayable(card)) {
                     // 1. recommendation
+                    //TODO átírni mert 5öst nem így kell mutatni
                     if (card.getNumber().equals(CardNumber.FIVE)) {
-                        if (!otherPlayersHasBeenShown(thisPlayer, playerToGiveHintTo, card) && checkWhatIsShowable(playerToGiveHintTo.getHand(), card, hintSymbol)) {
+                        if (checkWhatIsShowable(playerToGiveHintTo.getHand(), card, hintSymbol)) {
                             return true;
                         }
                     } // 2. recommendation
@@ -351,10 +384,21 @@ public class AIPlayer {
                         return true;
                     }
                 }
-                // TODO 5ös megmutatása hogy ne dobjuk el
                 // TODO essential kártya már kidobva, a maradék mutatása
             }
         }
+        // TODO valamiért nem mindig mutatja meg az 5öst
+        // Setting the hintSymbol for showing cards with the number 5
+        for (Card card : playerToGiveHintTo.getHand().cards) {
+            if (card.getNumber().equals(CardNumber.FIVE) && !card.knownNumber) {
+                hintSymbol.hintNumber = card.getNumber();
+                return true;
+            } else if (card.getNumber().equals(CardNumber.FIVE) && !card.knownColor) {
+                hintSymbol.hintColor = card.getColor();
+                return true;
+            }
+        }
+
 
         return false;
     }
