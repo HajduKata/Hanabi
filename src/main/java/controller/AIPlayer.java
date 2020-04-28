@@ -507,6 +507,7 @@ public class AIPlayer {
     }
 
     private boolean expendableCardCanBeShown(Player thisPlayer, Player playerToGiveHintTo, CardNumber numberToBeShown) {
+        int howManyShown = 0;
         // If the player has numberToBeShown and that number cannot be played yet
         if (symbolCounter(playerToGiveHintTo.getHand(), null, numberToBeShown) > 0 && Fireworks.getFireworks().howManyOfThatNumberPlayed(numberToBeShown.previous()) == 0) {
             for (Card card : playerToGiveHintTo.getHand().cards) {
@@ -515,10 +516,20 @@ public class AIPlayer {
                     if (isDuplicate(playerToGiveHintTo.getHand(), card) || checkForDuplicatesShownEverywhere(playerToGiveHintTo, thisPlayer, card)) {
                         return false;
                     }
+                    if(card.knownNumber) {
+                        howManyShown++;
+                    }
                 }
             }
+            // If all symbols have been shown, don't show it again
+            if(howManyShown == symbolCounter(playerToGiveHintTo.getHand(), null, numberToBeShown)) {
+                return false;
+            } else {
+                return true;
+            }
+
         }
-        return true;
+        return false;
     }
 
     private boolean checkForDuplicatesShownEverywhere(Player playerToGiveHintTo, Player thisPlayer, Card cardToCheck) {

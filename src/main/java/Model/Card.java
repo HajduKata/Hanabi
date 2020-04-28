@@ -31,6 +31,7 @@ public class Card implements Comparable<Card> {
     private boolean selected;
     public boolean knownColor;
     public boolean knownNumber;
+    public boolean discardable;
     private SortedMap<CardColor, Boolean> assumedColor;
     private SortedMap<CardNumber, Boolean> assumedNumber;
     public int[][] possibilityTable;
@@ -67,6 +68,7 @@ public class Card implements Comparable<Card> {
         knownColor = false;
         knownNumber = false;
         selected = false;
+        discardable = false;
 
         assumedColor = new TreeMap<>();
         for (CardColor color : CardColor.values()) {

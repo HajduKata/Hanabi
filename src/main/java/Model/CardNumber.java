@@ -30,6 +30,23 @@ public enum CardNumber {
         }
     }
 
+    public CardNumber previous() {
+        switch (this) {
+            case FIVE:
+                return FOUR;
+            case FOUR:
+                return THREE;
+            case THREE:
+                return TWO;
+            case TWO:
+                return ONE;
+            case ONE:
+                return ZERO;
+            default:
+                return null;
+        }
+    }
+
     /**
      * If @number is lower or equal than @this, return true
      */
