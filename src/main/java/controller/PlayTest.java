@@ -60,7 +60,7 @@ public class PlayTest {
         if (Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
             result = Players.numberOfPlayers + ";" + Fireworks.getFireworks().getNumberOfCardsPlayed();
         } else if (Tokens.getTokens().getLife() == 0) {
-            result = Players.numberOfPlayers + ";-1";
+            result = Players.numberOfPlayers + ";0";
         }
         return result;
     }

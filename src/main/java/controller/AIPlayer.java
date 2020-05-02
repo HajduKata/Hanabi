@@ -36,6 +36,9 @@ public class AIPlayer {
          * 5. Discard card c1.
          */
 
+        //TODO a player akinek hintet adunk és amilyen hintet adunk, magasabb szintű összekapcsolása
+        //TODO ne csak a biztosan jó kártyákat mutassuk meg
+
         String actionMessage = "";
 
         Card cardToPlay = whatCardToPlay(thisPlayer.getHand());
@@ -147,6 +150,7 @@ public class AIPlayer {
             // If both Color and Number is known of the card
             if (card.knownNumber && card.knownColor) {
                 // If the card has already been played before, it's a dead card
+                // TODO vagy már ki van dobva essetial kártya
                 if (Fireworks.getFireworks().isDeadCard(card)) {
                     cardToBeDiscarded = card;
                     break;
@@ -154,7 +158,6 @@ public class AIPlayer {
             } // If only Number is known of the card
             else if (card.knownNumber) {
                 // If there is none of that number to be played
-                // TODO vagy már ki van dobva essetial kártya
                 if (Fireworks.getFireworks().howManyOfThatNumberPlayed(card.getNumber()) == CardColor.values().length) {
                     cardToBeDiscarded = card;
                     break;
@@ -162,7 +165,6 @@ public class AIPlayer {
             } // If only Color is known of the card
             else if (card.knownColor) {
                 // If the fireworks of that color is already finished
-                // TODO vagy már ki van dobva essetial kártya
                 if (Fireworks.getFireworks().howManyOfThatColorPlayed(card.getColor()) == 5) {
                     cardToBeDiscarded = card;
                     break;
