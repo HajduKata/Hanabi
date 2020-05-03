@@ -77,9 +77,7 @@ public class Fireworks {
 
     public boolean isPlayable(Card card) {
         int index = card.getColor().ordinal();
-        if (fireworks[index].getNumber() == CardNumber.ZERO && card.getNumber() == CardNumber.ONE) {
-            return true;
-        } else if (fireworks[index].getNumber().next() == card.getNumber()) {
+        if (fireworks[index].getNumber().next() == card.getNumber()) {
             return true;
         }
         return false;
@@ -98,6 +96,18 @@ public class Fireworks {
     public int howManyOfThatColorPlayed(CardColor color) {
         int index = color.ordinal();
         return fireworks[index].getNumber().ordinal();
+    }
+
+    public boolean numberCanBePlayed(CardNumber number) {
+        for (Card card : fireworks) {
+            if(card.getNumber().equals(CardNumber.FIVE)) {
+                continue;
+            }
+            if(card.getNumber().next().equals(number)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isDeadCard(Card card) {
