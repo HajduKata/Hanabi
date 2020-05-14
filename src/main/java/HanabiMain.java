@@ -1,5 +1,15 @@
-import controller.PlayTest;
+/*
+Hanabi program
+Készítette: Hajdu Katalin
+Elkészült 2020. május 15.
 
+Tesztüzemmód futtatásához a kikommentezett részt kell használni,
+és a korábban használt programrészletet kikommentezni.
+ */
+
+import controller.PlayHanabi;
+
+import controller.PlayTest;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,14 +19,14 @@ import java.time.format.DateTimeFormatter;
 public class HanabiMain {
 
     public static void main(String[] args) {
+
         boolean exit = false;
-        /*
         while (!exit) {
             PlayHanabi playHanabi = new PlayHanabi();
             exit = playHanabi.play();
         }
-        */
 
+        /*
         // Test Games
         int numberOfTests = 1000;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd. HH-mm-ss");
@@ -36,5 +46,6 @@ public class HanabiMain {
             }
         }
         printWriter.close();
+        */
     }
 }

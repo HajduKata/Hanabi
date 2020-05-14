@@ -38,7 +38,7 @@ import static view.HanabiUtilities.NUMBER_OFFSET_Y;
 import static view.HanabiUtilities.SYMBOL_WIDTH_HEIGHT;
 
 public class PlayerPanel extends JPanel implements MouseListener, MouseMotionListener {
-    private static final Color BG_COLOR = Color.decode("#003366");
+    private static final Color BG_COLOR = Color.decode("#003375");
 
     private final Player player;
     private final ControlPanel controlPanel;
@@ -108,7 +108,6 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
 
     /**
      * When clicked on this player panel
-     *
      * @param mouseE mouse event object
      */
     @Override
@@ -116,7 +115,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
         int xOfLastCard = CARD_START_POS_X + (Hand.getNumberOfCardsInHand() - 1) * CARD_OFFSET_X;
 
         // When player plays a card
-        if (/*this.getPlayer().isHumanPlayer() &&*/ controlPanel.isPlayACard) {
+        if (this.getPlayer().isHumanPlayer() && controlPanel.isPlayACard) {
             Card clickedCard = new Card(CardColor.RED);
             for (Card card : this.getPlayer().getHand().cards) {
                 if (card.getX() == xOfLastCard) {
@@ -135,7 +134,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // When player discards a card
-        if (/*this.getPlayer().isHumanPlayer() &&*/ controlPanel.isDiscardACard && Tokens.getTokens().getClues() < 8) {
+        if (this.getPlayer().isHumanPlayer() && controlPanel.isDiscardACard && Tokens.getTokens().getClues() < 8) {
             Card clickedCard = new Card(CardColor.RED);
             for (Card card : this.getPlayer().getHand().cards) {
                 if (card.getX() == xOfLastCard) {
@@ -250,7 +249,6 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseMoved(MouseEvent mouseE) {
-        //TODO ha a panelből kivisszük az egeret (5 játékosnál mert ott érintkezik a kártya alja a panel szélével), a kártya selected marad
         int xOfLastCard = CARD_START_POS_X + (Hand.getNumberOfCardsInHand() - 1) * CARD_OFFSET_X;
         if (this.getPlayer().isHumanPlayer() && (controlPanel.isPlayACard || controlPanel.isDiscardACard)) {
             for (Card card : this.getPlayer().getHand().cards) {

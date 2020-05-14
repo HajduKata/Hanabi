@@ -5,21 +5,18 @@ import model.HanabiCards;
 import model.Player;
 import model.Players;
 import model.Tokens;
-import view.GameLostWindow;
-import view.GameTable;
 import view.GameEndWindow;
+import view.GameTable;
 import view.SetupWindow;
 
 import javax.swing.JFrame;
-import java.awt.Image;
-import java.awt.image.ImageObserver;
 import java.util.concurrent.TimeUnit;
 
-public class PlayHanabi implements ImageObserver {
+public class PlayHanabi {
 
     private boolean gameEnd = false;
     private GameTable table;
-    AIController aiController;
+    private AIPlayer aiPlayer;
 
     public PlayHanabi() {
         SetupWindow setupWindow = new SetupWindow();
@@ -30,7 +27,7 @@ public class PlayHanabi implements ImageObserver {
                 e.printStackTrace();
             }
         }
-        aiController = new AIController(setupWindow.getNumberOfPlayers());
+        aiPlayer = new AIPlayer(setupWindow.getNumberOfPlayers(), false);
         initGame(setupWindow, setupWindow.getNumberOfPlayers(), setupWindow.getName());
     }
 
@@ -41,7 +38,6 @@ public class PlayHanabi implements ImageObserver {
         Players.setupPlayers(numberOfPlayers, name);
 
         table = new GameTable();
-
     }
 
     public boolean play() {
@@ -87,9 +83,7 @@ public class PlayHanabi implements ImageObserver {
     public void playerTurn(Player actualPlayer) {
         // AI logic comes here
         if (actualPlayer.isAIPlayer()) {
-            aiController.updatePossibilityTable(actualPlayer);
-            aiController.chooseAction(actualPlayer);
-
+            aiPlayer.chooseAction(actualPlayer);
             actualPlayer.setTheirTurn(false);
             table.repaintAll();
         } else {
@@ -102,10 +96,5 @@ public class PlayHanabi implements ImageObserver {
                 // isTheirTurn changes in PlayerPanel, after action has been done
             }
         }
-    }
-
-    @Override
-    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-        return false;
     }
 }

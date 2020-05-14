@@ -16,7 +16,7 @@ import java.awt.Graphics;
  */
 public class FireworksPanel extends JPanel {
     private static final String FIREWORKS_TITLE = "Tűzijátékok";
-    private static final Color BG_COLOR = Color.decode("#003366");
+    private static final Color BG_COLOR = Color.decode("#003375");
 
     private Fireworks fireworks;
 

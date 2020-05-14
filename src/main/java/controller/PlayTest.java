@@ -67,7 +67,6 @@ public class PlayTest {
 
     private void playerTurn(Player actualPlayer) {
         // AI logic comes here
-        //aiController.updatePossibilityTable(actualPlayer);
         aiPlayer.chooseAction(actualPlayer);
         actualPlayer.setTheirTurn(false);
 

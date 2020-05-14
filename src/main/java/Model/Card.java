@@ -18,9 +18,9 @@ public class Card implements Comparable<Card> {
     public static final int CARD_SIZE_X = 130;
     public static final int CARD_SIZE_Y = 130;
     public static final int CARD_OFFSET_X = 60;
-    public static final int CARD_OFFSET_Y = 20;
+    public static final int CARD_OFFSET_Y = 30;
 
-    public static int numberOfColors = 5; // TODO get from settings
+    public static int numberOfColors = 5;
     // UI fields
     public BufferedImage image;
     private int x;

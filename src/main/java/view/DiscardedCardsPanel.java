@@ -16,7 +16,7 @@ import static view.GameTable.CARD_COLORS_DIMENSION;
 
 public class DiscardedCardsPanel extends JPanel {
     private static final String DISCARDED_CARDS_TITLE = "Eldobott lapok";
-    private static final Color BG_COLOR = Color.decode("#003366");
+    private static final Color BG_COLOR = Color.decode("#003375");
 
     private DiscardedCards discardedCards;
 

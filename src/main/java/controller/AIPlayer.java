@@ -19,7 +19,7 @@ import java.util.List;
 
 import static view.PlayerPanel.drawNewCard;
 
-public class AIPlayer {
+class AIPlayer {
     private int numberOfPlayers;
     private boolean isTest;
     private Player playerToGiveHintTo;
@@ -40,10 +40,7 @@ public class AIPlayer {
          * 5. Discard card c1.
          */
 
-        //TODO a player akinek hintet adunk és amilyen hintet adunk, magasabb szintű összekapcsolása
-        //TODO ne csak a biztosan jó kártyákat mutassuk meg
-
-        String actionMessage = "";
+        String actionMessage;
 
         Card cardToPlay = whatCardToPlay(thisPlayer.getHand());
 
@@ -60,7 +57,7 @@ public class AIPlayer {
             actionMessage = thisPlayer.getName() + " kijátszott egy kártyát.";
         } // 2. If there are hint tokens available && there is a player with playable cards in hand && we can give a hint that only shows the playable cards, give a hint.
         else if (Tokens.getTokens().getClues() > 0 && hintChooser(thisPlayer)) {
-            giveHint(playerToGiveHintTo);
+            giveHint();
             actionMessage = thisPlayer.getName() + " információt adott.";
         } // 3. Discard the dead card with lowest index.
         else if (cardToDiscard != null) {
@@ -154,7 +151,6 @@ public class AIPlayer {
             // If both Color and Number is known of the card
             if (card.knownNumber && card.knownColor) {
                 // If the card has already been played before, it's a dead card
-                // TODO vagy már ki van dobva essetial kártya
                 if (Fireworks.getFireworks().isDeadCard(card)) {
                     cardToBeDiscarded = card;
                     break;
@@ -215,26 +211,6 @@ public class AIPlayer {
          * 5. Recommend that c1 be discarded.
          */
 
-        // Check players for wrongly shown cards
-        int index = increaseAndCheckIndex(Players.getPlayerIndex());
-        Player iterateThePlayers = Players.getIndexPlayer(index);
-        while (!iterateThePlayers.equals(thisPlayer)) {
-            for (Card card : iterateThePlayers.getHand().cards) {
-                // If the Number is known, but the card cannot be played, while there are still some of that Number to be played
-                if (card.knownNumber && !Fireworks.getFireworks().isPlayable(card) && Fireworks.getFireworks().numberCanBePlayed(card.getNumber())) {
-                    hintSymbol.hintColor = card.getColor();
-                    playerToGiveHintTo = iterateThePlayers;
-                    for (Card iterateCard : iterateThePlayers.getHand().cards) {
-                        if (iterateCard.getColor().equals(card.getColor()))
-                            iterateCard.nonPlayable = true;
-                    }
-                    return true;
-                }
-            }
-            index = increaseAndCheckIndex(index);
-            iterateThePlayers = Players.getIndexPlayer(index);
-        }
-
         // If there are players with playable cards in hand
         List<Player> playableCardsPlayers = whichPlayersToPlayACard(thisPlayer);
         if (!playableCardsPlayers.isEmpty()) {
@@ -263,7 +239,6 @@ public class AIPlayer {
                     }
                 }
             }
-            //TODO kérdés ide tegyek-e returnt, fent át kell írni az if-eket
         }
 
         // If there are players with discardable dead cards in hand
@@ -284,7 +259,6 @@ public class AIPlayer {
                             playerToGiveHintTo = iteratePlayer;
                             return true;
                         }
-                        // TODO (essential kártya már kidobva, a maradék mutatása) --> többet kell vele bajlódni mint amennyit ad?
                     }
                 }
             }
@@ -333,9 +307,6 @@ public class AIPlayer {
         while (!iteratePlayer.equals(thisPlayer)) {
             // If the player has playable cards in hand and doesn't have all cards shown to him that can be played
             if (howManyPlayableCardsInHand(iteratePlayer.getHand()) > 0 && !playerAlreadyHasAllClues(iteratePlayer.getHand())) {
-                //TODO második feltétel nem biztos, hogy kell
-                //TODO akinek a legtöbb kijátszható kártya van a kezében?
-                // közben lista lett az egy playerből
                 playersToGiveHintTo.add(iteratePlayer);
             }
             index = increaseAndCheckIndex(index);
@@ -395,12 +366,7 @@ public class AIPlayer {
             else if (symbolCounter(hand, card.getColor(), null) == 1 && !card.knownColor) {
                 hintSymbol.hintColor = card.getColor();
                 return true;
-            } // In every other case
-            else {
-                hintSymbol.hintNumber = card.getNumber();
-                return true;
             }
-            //TODO színt vagy számot nem egyértelműen mutatni
         }
         return false;
     }
@@ -504,11 +470,7 @@ public class AIPlayer {
                 }
             }
             // If all symbols have been shown, don't show it again
-            if (howManyShown == symbolCounter(playerToGiveHintTo.getHand(), null, numberToBeShown)) {
-                return false;
-            } else {
-                return true;
-            }
+            return howManyShown != symbolCounter(playerToGiveHintTo.getHand(), null, numberToBeShown);
 
         }
         return false;
@@ -547,7 +509,7 @@ public class AIPlayer {
         return false;
     }
 
-    private void giveHint(Player playerToGiveHintTo) {
+    private void giveHint() {
         // Give a hint to the player
         for (Card card : playerToGiveHintTo.getHand().cards) {
             if (hintSymbol.hintColor != null) {
