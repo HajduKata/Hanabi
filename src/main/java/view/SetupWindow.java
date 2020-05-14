@@ -25,8 +25,8 @@ public class SetupWindow extends JFrame implements ActionListener {
     private JTextField playerName = new JTextField();
     private int numberOfPlayers;
     private JComboBox numberOfPlayersComboBox = new JComboBox();
-    private String diff;
-    private JComboBox difficulty;
+//    private String diff;
+//    private JComboBox difficulty;
 
     public boolean done = false;
 
@@ -97,7 +97,7 @@ public class SetupWindow extends JFrame implements ActionListener {
         return numberOfPlayers;
     }
 
-    public String getDiff() {
-        return diff;
-    }
+//    public String getDiff() {
+//        return diff;
+//    }
 }

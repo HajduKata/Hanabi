@@ -1,6 +1,7 @@
 package view;
 
 import javax.imageio.ImageIO;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +18,16 @@ public class HanabiUtilities {
     public static final int CARD_START_POS_X = 5;
     public static final int CARD_START_POS_Y = 20;
 
-    public static final int SYMBOL_SIZE_X = 45;
-    public static final int SYMBOL_SIZE_Y = 45;
+    static final int SYMBOL_SIZE_X = 45;
+    static final int SYMBOL_SIZE_Y = 45;
+    static final int COLOR_OFFSET_X = 18;
+    static final int COLOR_OFFSET_Y = 40;
+    static final int NUMBER_OFFSET_X = 18;
+    static final int NUMBER_OFFSET_Y = 5;
 
-    public static final int COLOR_OFFSET_X = 18;
-    public static final int COLOR_OFFSET_Y = 40;
-    public static final int NUMBER_OFFSET_X = 18;
-    public static final int NUMBER_OFFSET_Y = 5;
+    static final int SYMBOL_WIDTH_HEIGHT = 40;
 
-    public static final int SYMBOL_WIDTH_HEIGHT = 40;
+    static final Color BG_COLOR = Color.decode("#003375");
 
     public static BufferedImage loadImage(URL imageURL) {
         try {
@@ -35,10 +37,5 @@ public class HanabiUtilities {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean clickContains(int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
-        return mouseX > startX && mouseX < endX &&
-                mouseY > startY && mouseY < endY;
     }
 }

@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.SortedMap;
 
 import static view.GameTable.CARD_COLORS_DIMENSION;
+import static view.HanabiUtilities.BG_COLOR;
 
 public class DiscardedCardsPanel extends JPanel {
     private static final String DISCARDED_CARDS_TITLE = "Eldobott lapok";
-    private static final Color BG_COLOR = Color.decode("#003375");
 
     private DiscardedCards discardedCards;
 
-    public DiscardedCardsPanel(DiscardedCards discardedCards) {
+    DiscardedCardsPanel(DiscardedCards discardedCards) {
         this.discardedCards = discardedCards;
         setBackground(BG_COLOR);
         setPreferredSize(CARD_COLORS_DIMENSION);

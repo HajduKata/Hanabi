@@ -11,7 +11,6 @@ import model.Tokens;
 import view.GameTable;
 
 public class PlayTest {
-    private boolean gameEnd = false;
     private GameTable table;
     private AIPlayer aiPlayer;
     private boolean isTest;
@@ -42,6 +41,7 @@ public class PlayTest {
 
     public String play() {
         boolean endOfDeck;
+        boolean gameEnd;
         do {
             Player actualPlayer = Players.nextPlayer();
             actualPlayer.setTheirTurn(true);

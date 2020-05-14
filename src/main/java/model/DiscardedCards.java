@@ -1,6 +1,5 @@
 package model;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,18 +10,16 @@ import java.util.TreeMap;
  * Singleton class that holds the last card of each color pile.
  */
 public class DiscardedCards {
-    public static final int MAX_NUMBER_OF_NUMBERS = 10;
+    private static final int MAX_NUMBER_OF_NUMBERS = 10;
 
     private static DiscardedCards instance;
     /* Holds all the cards that have been discarded */
-    SortedMap<CardColor, List<Card>> discardedCards;
-    private int numberOfDiscardedCards;
+    private SortedMap<CardColor, List<Card>> discardedCards;
 
     /**
      * Private empty constructor (singleton) of discard.
      */
      private DiscardedCards() {
-         numberOfDiscardedCards = 0;
         discardedCards = new TreeMap<>();
         for (CardColor color : CardColor.values()) {
             Card empyCard = new Card(color);
@@ -75,12 +72,7 @@ public class DiscardedCards {
         actualColorList.add(card);
         Collections.sort(actualColorList);
         discardedCards.replace(card.getColor(), actualColorList);
-        numberOfDiscardedCards++;
         return true;
-    }
-
-    public int getNumberOfDiscardedCards() {
-        return numberOfDiscardedCards;
     }
 
     public static void clearInstance() {

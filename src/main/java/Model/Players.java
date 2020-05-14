@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static view.HanabiUtilities.AI;
@@ -16,7 +15,7 @@ public class Players {
     private static final int MAX_NUMBER_OF_PLAYERS = 5;
 
     private static List<Player> players;
-    private static int playerIndex = 0;
+    private static int playerIndex;
 
     public static int numberOfPlayers;
 
@@ -37,6 +36,7 @@ public class Players {
         assert numberOfPlayers <= MAX_NUMBER_OF_PLAYERS;
 
         Players.numberOfPlayers = numberOfPlayers;
+        Players.playerIndex = (int) Math.floor(Math.random()*numberOfPlayers);
 
         players = new ArrayList<>(numberOfPlayers);
         //Initialize the human player
@@ -57,6 +57,7 @@ public class Players {
         assert numberOfPlayers >= MIN_NUMBER_OF_PLAYERS;
         assert numberOfPlayers <= MAX_NUMBER_OF_PLAYERS;
         Players.numberOfPlayers = numberOfPlayers;
+        Players.playerIndex = (int) Math.floor(Math.random()*numberOfPlayers);
         players = new ArrayList<>(numberOfPlayers);
         //Initialize all the AI players
         for (int i = 0; i < numberOfPlayers; i++) {

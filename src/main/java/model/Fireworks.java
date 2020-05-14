@@ -4,7 +4,7 @@ package model;
  * Singleton class that holds the last card of each color pile.
  */
 public class Fireworks {
-    public static final int MAX_NUMBER_OF_COLORS = CardColor.values().length;
+    private static final int MAX_NUMBER_OF_COLORS = CardColor.values().length;
 
     private static Fireworks instance;
     /* Holds the last card of each firework color */
@@ -77,10 +77,7 @@ public class Fireworks {
 
     public boolean isPlayable(Card card) {
         int index = card.getColor().ordinal();
-        if (fireworks[index].getNumber().next() == card.getNumber()) {
-            return true;
-        }
-        return false;
+        return fireworks[index].getNumber().next() == card.getNumber();
     }
 
     public int howManyOfThatNumberPlayed(CardNumber number) {

@@ -2,7 +2,6 @@ package view;
 
 import model.DiscardedCards;
 import model.Fireworks;
-import model.History;
 import model.Player;
 import model.Players;
 import model.Tokens;
@@ -47,13 +46,6 @@ public class GameTable extends JFrame {
     static final int BUTTON_HEIGHT = 25;
 
     private ControlPanel controlPanel;
-    private FireworksPanel fireworksPanel;
-    private DiscardedCardsPanel discardedCardsPanel;
-    private CluePanel cluePanel;
-
-    private JPanel playersContainer;
-    private JPanel placedCardsContainer;
-    private JPanel controlContainer;
 
     public GameTable() {
         setTitle("Hanabi");
@@ -70,31 +62,31 @@ public class GameTable extends JFrame {
 
     private void initTable() {
         // Fireworks and Discarded cards panels
-        placedCardsContainer = new JPanel();
+        JPanel placedCardsContainer = new JPanel();
         placedCardsContainer.setPreferredSize(MID_PANEL_DIMENSION);
         placedCardsContainer.setLayout(new BoxLayout(placedCardsContainer, BoxLayout.Y_AXIS));
         placedCardsContainer.setAlignmentX(LEFT_ALIGNMENT);
         placedCardsContainer.setAlignmentY(TOP_ALIGNMENT);
         // Initializing fireworks panel
-        fireworksPanel = new FireworksPanel(Fireworks.getFireworks());
+        FireworksPanel fireworksPanel = new FireworksPanel(Fireworks.getFireworks());
         // Add empty fireworks to container
         placedCardsContainer.add(fireworksPanel);
         // Initializing discarded cards panel
-        discardedCardsPanel = new DiscardedCardsPanel(DiscardedCards.getDiscard());
+        DiscardedCardsPanel discardedCardsPanel = new DiscardedCardsPanel(DiscardedCards.getDiscard());
         // Add empty discarded cards to container
         placedCardsContainer.add(discardedCardsPanel);
 
         // Initializing Control Panel
         controlPanel = new ControlPanel();
         // Control panel and information panel
-        controlContainer = new JPanel();
+        JPanel controlContainer = new JPanel();
         controlContainer.setPreferredSize(RIGHT_PANEL_DIMENSION);
         controlContainer.setLayout(new BoxLayout(controlContainer, BoxLayout.Y_AXIS));
         controlContainer.setAlignmentX(LEFT_ALIGNMENT);
         controlContainer.setAlignmentY(TOP_ALIGNMENT);
 
         // Clues and Fails
-        cluePanel = new CluePanel(Tokens.getTokens());
+        CluePanel cluePanel = new CluePanel(Tokens.getTokens());
         cluePanel.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, 70));
         cluePanel.setLayout(new BoxLayout(cluePanel, BoxLayout.Y_AXIS));
         cluePanel.setAlignmentX(CENTER_ALIGNMENT);
@@ -106,7 +98,7 @@ public class GameTable extends JFrame {
 
 
         // Player cards panels
-        playersContainer = new JPanel();
+        JPanel playersContainer = new JPanel();
         playersContainer.setPreferredSize(LEFT_PANEL_DIMENSION);
         playersContainer.setLayout(new BoxLayout(playersContainer, BoxLayout.Y_AXIS));
         playersContainer.setAlignmentX(LEFT_ALIGNMENT);

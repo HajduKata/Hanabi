@@ -19,7 +19,6 @@ import javax.swing.border.Border;
 import javax.swing.plaf.BorderUIResource;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -27,26 +26,25 @@ import java.awt.Graphics;
 import static view.GameTable.BUTTON_HEIGHT;
 import static view.GameTable.CONTROL_PANEL_HEIGHT;
 import static view.GameTable.RIGHT_PANEL_WIDTH;
+import static view.HanabiUtilities.BG_COLOR;
 import static view.HanabiUtilities.COLOR_OFFSET_X;
 import static view.HanabiUtilities.NUMBER_OFFSET_Y;
 import static view.HanabiUtilities.SYMBOL_SIZE_X;
 import static view.HanabiUtilities.SYMBOL_SIZE_Y;
 
 public class ControlPanel extends JPanel {
-    private static final Color BG_COLOR = Color.decode("#003366");
     boolean isPlayACard = false;
     boolean isDiscardACard = false;
 
     public JButton playCardButton;
     public JButton discardCardButton;
     public JButton giveHintButton;
-    private SelectedSymbol selectedSymbol;
     private CardLayout cardLayout;
     private JPanel extensionPanel;
     private JPanel historyPanel;
     private History history = History.getHistory();
 
-    public ControlPanel() {
+    ControlPanel() {
         // Control buttons
         JPanel controlButtonsContainer = new JPanel();
         controlButtonsContainer.setLayout(new BoxLayout(controlButtonsContainer, BoxLayout.Y_AXIS));
@@ -83,7 +81,7 @@ public class ControlPanel extends JPanel {
         extensionPanel.add(playCardLabel, "play");
         extensionPanel.add(discardCardLabel, "discard");
         extensionPanel.add(cannotDiscardCardLabel, "cannotDiscard");
-        extensionPanel.add(setSelectedHint(SelectedSymbol.getSelectedSymbol()), "hint");
+        extensionPanel.add(setSelectedHint(), "hint");
 
         this.add(controlButtonsContainer);
         this.add(extensionPanel);
@@ -96,7 +94,6 @@ public class ControlPanel extends JPanel {
         discardCardButton.setEnabled(false);
         giveHintButton.setEnabled(false);
 
-        //TODO görgő oldalra?
         historyPanel = new JPanel();
         historyPanel.setBorder(border);
         historyPanel.setPreferredSize(new Dimension(RIGHT_PANEL_WIDTH, 461));
@@ -136,8 +133,7 @@ public class ControlPanel extends JPanel {
         }
     }
 
-    private JPanel setSelectedHint(SelectedSymbol selectedSymbol) {
-        this.selectedSymbol = selectedSymbol;
+    private JPanel setSelectedHint() {
         JPanel hintPanel = new JPanel();
         hintPanel.setLayout(new BoxLayout(hintPanel, BoxLayout.Y_AXIS));
 
@@ -208,7 +204,7 @@ public class ControlPanel extends JPanel {
         }
     }
 
-    public void resetAllCards() {
+    private void resetAllCards() {
         for (Player player : Players.getThePlayers()) {
             if (!player.isHumanPlayer()) {
                 for (Card card : player.getHand().cards) {
@@ -223,11 +219,11 @@ public class ControlPanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        paintHistory(g);
+        paintHistory();
         super.paintComponent(g);
     }
 
-    private void paintHistory(Graphics g) {
+    private void paintHistory() {
         historyPanel.removeAll();
         for (Object label : history.getHistoryList()) {
             historyPanel.add((JLabel) label);

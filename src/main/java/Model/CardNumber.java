@@ -5,7 +5,7 @@ public enum CardNumber {
 
     private String value;
 
-    private CardNumber(String value) {
+    CardNumber(String value) {
         this.value = value;
     }
 

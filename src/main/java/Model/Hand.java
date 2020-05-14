@@ -8,7 +8,7 @@ import static view.HanabiUtilities.CARD_START_POS_X;
 import static view.HanabiUtilities.CARD_START_POS_Y;
 
 public class Hand {
-    public static int numberOfCardsInHand;
+    private static int numberOfCardsInHand;
     public List<Card> cards;
 
     Hand() {
@@ -30,7 +30,7 @@ public class Hand {
         reset();
     }
 
-    void reset() {
+    private void reset() {
         int index = 0;
         for (Card card : cards) {
             card.setX(CARD_START_POS_X + index * CARD_OFFSET_X);

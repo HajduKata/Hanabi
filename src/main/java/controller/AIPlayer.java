@@ -94,13 +94,12 @@ class AIPlayer {
                     break;
                 }
             } // If only Number is known of the card and there is still some of that Number to be played next AND is not discardalbe
-            // && Fireworks.getFireworks().howManyOfThatNumberPlayed(card.getNumber()) < CardColor.values().length
             else if (card.knownNumber && !card.discardable && Fireworks.getFireworks().numberCanBePlayed(card.getNumber())
                     && checkShownAndPlayableNumbers(hand, card.getNumber())) {
                 cardToPlay = card;
                 break;
             } // If only Color is known of the card and there is still some of that Color to be played
-            else if (card.knownColor && !card.nonPlayable && Fireworks.getFireworks().howManyOfThatColorPlayed(card.getColor()) < 5) {
+            else if (card.knownColor && Fireworks.getFireworks().howManyOfThatColorPlayed(card.getColor()) < 5) {
                 // If this is the only card that has knownColor of the shown color
                 int counter = 0;
                 for (Card counterCard : hand.cards) {

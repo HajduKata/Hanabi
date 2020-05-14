@@ -1,11 +1,9 @@
 package view;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -23,7 +21,7 @@ public class GameEndWindow extends JFrame implements ActionListener {
         this.gameTable = gameTable;
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        String endGameText = null;
+        String endGameText;
         if (won) {
             this.setTitle("Győzelem!");
             endGameText = "Gratulálunk! " + points + " pontot szereztél!";

@@ -26,7 +26,7 @@ public class HanabiMain {
             exit = playHanabi.play();
         }
 
-        /*
+
         // Test Games
         int numberOfTests = 1000;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd. HH-mm-ss");
@@ -46,6 +46,6 @@ public class HanabiMain {
             }
         }
         printWriter.close();
-        */
+
     }
 }

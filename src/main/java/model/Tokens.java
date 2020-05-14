@@ -27,10 +27,6 @@ public class Tokens {
         }
     }
 
-    public void increaseLife() {
-        life++;
-    }
-
     public int getClues() {
         return clues;
     }

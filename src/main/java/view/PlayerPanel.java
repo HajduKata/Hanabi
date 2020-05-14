@@ -30,6 +30,7 @@ import static model.Card.CARD_OFFSET_X;
 import static model.Card.CARD_SIZE_X;
 import static model.Card.CARD_SIZE_Y;
 import static view.GameTable.LEFT_PANEL_DIMENSION;
+import static view.HanabiUtilities.BG_COLOR;
 import static view.HanabiUtilities.CARD_START_POS_X;
 import static view.HanabiUtilities.COLOR_OFFSET_X;
 import static view.HanabiUtilities.COLOR_OFFSET_Y;
@@ -38,8 +39,6 @@ import static view.HanabiUtilities.NUMBER_OFFSET_Y;
 import static view.HanabiUtilities.SYMBOL_WIDTH_HEIGHT;
 
 public class PlayerPanel extends JPanel implements MouseListener, MouseMotionListener {
-    private static final Color BG_COLOR = Color.decode("#003375");
-
     private final Player player;
     private final ControlPanel controlPanel;
     private final FireworksPanel fireworksPanel;
@@ -102,7 +101,7 @@ public class PlayerPanel extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    public Player getPlayer() {
+    private Player getPlayer() {
         return player;
     }
 

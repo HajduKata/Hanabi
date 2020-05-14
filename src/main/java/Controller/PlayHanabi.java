@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayHanabi {
 
-    private boolean gameEnd = false;
     private GameTable table;
     private AIPlayer aiPlayer;
 
@@ -42,6 +41,7 @@ public class PlayHanabi {
 
     public boolean play() {
         boolean endOfDeck;
+        boolean gameEnd;
         do {
             Player actualPlayer = Players.nextPlayer();
             actualPlayer.setTheirTurn(true);
@@ -80,7 +80,7 @@ public class PlayHanabi {
         }
     }
 
-    public void playerTurn(Player actualPlayer) {
+    private void playerTurn(Player actualPlayer) {
         // AI logic comes here
         if (actualPlayer.isAIPlayer()) {
             aiPlayer.chooseAction(actualPlayer);

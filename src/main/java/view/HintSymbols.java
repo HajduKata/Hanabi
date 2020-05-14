@@ -12,7 +12,7 @@ import static view.HanabiUtilities.loadImage;
 /**
  * Utility class for the symbol images
  */
-public class HintSymbols {
+class HintSymbols {
     private static BufferedImage redColorSymbolImage;
     private static BufferedImage greenColorSymbolImage;
     private static BufferedImage blueColorSymbolImage;
@@ -24,7 +24,7 @@ public class HintSymbols {
     private static BufferedImage number4SymbolImage;
     private static BufferedImage number5SymbolImage;
 
-    public HintSymbols() {
+    HintSymbols() {
         redColorSymbolImage = loadImage(Objects.requireNonNull(classLoader.getResource("Symbols/red.png")));
         greenColorSymbolImage = loadImage(Objects.requireNonNull(classLoader.getResource("Symbols/green.png")));
         blueColorSymbolImage = loadImage(Objects.requireNonNull(classLoader.getResource("Symbols/blue.png")));
