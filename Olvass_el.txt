@@ -1,0 +1,7 @@
+A program könyvtára megtalálható a https://github.com/HajduKata/Hanabi címen.
+Innen letölthető ZIP-ként, vagy Git-et használva klónozva.
+
+A program futtatásához az ...\out\production\Hanabi könyvtárba kell navigálni.
+Itt kell kiadni a "java HanabiMain" parancsot, és a játék elindul.
+
+Alternatívan IDE (Eclipse, IntelliJ, NetBeans) fejlesztőkörnyezetből is lehet futtatni a programot.
