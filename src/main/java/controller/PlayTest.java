@@ -8,38 +8,34 @@ import model.Player;
 import model.Players;
 import model.SelectedSymbol;
 import model.Tokens;
-import view.GameTable;
 
-public class PlayTest {
-    private GameTable table;
-    private AIPlayer aiPlayer;
-    private boolean isTest;
+public class PlayTest extends PlayAbstractClass {
+    private final AIPlayer aiPlayer;
+    private final int numberOfPlayers;
+    private String result;
 
-    public PlayTest(int numberOfPlayers, boolean isTest) {
-        this.isTest = isTest;
-        aiPlayer = new AIPlayer(numberOfPlayers, isTest);
-
-        initGame(numberOfPlayers);
+    public PlayTest(int numberOfPlayers) {
+        aiPlayer = new AIPlayer(numberOfPlayers, true);
+        this.numberOfPlayers = numberOfPlayers;
+        initGame();
     }
 
-    private void initGame(int numberOfPlayers) {
-        // Clear all previous instances
+    void initGame() {
+        clearPreviousInstances();
+        super.initGame(numberOfPlayers);
+    }
+
+    // Clear all previous instances before each test run
+    private void clearPreviousInstances() {
         DiscardedCards.clearInstance();
         Fireworks.clearInstance();
         History.clearInstance();
         SelectedSymbol.clearInstance();
         Tokens.clearInstance();
         HanabiCards.initDeck();
-
-        HanabiCards.DECK.shuffle();
-        Players.setupTestPlayers(numberOfPlayers);
-
-        if (!isTest) {
-            table = new GameTable();
-        }
     }
 
-    public String play() {
+    public boolean play() {
         boolean endOfDeck;
         boolean gameEnd;
         do {
@@ -49,6 +45,7 @@ public class PlayTest {
             endOfDeck = HanabiCards.DECK.endOfDeck();
             gameEnd = endOfDeck || Tokens.getTokens().getLife() == 0 || Fireworks.getFireworks().allFireworksFinished();
         } while (!gameEnd);
+
         if (endOfDeck) {
             for (int i = 0; i < Players.numberOfPlayers; i++) {
                 Player actualPlayer = Players.nextPlayer();
@@ -56,22 +53,24 @@ public class PlayTest {
                 playerTurn(actualPlayer);
             }
         }
-        String result = "";
+
+        result = "";
         if (Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
             result = Players.numberOfPlayers + ";" + Fireworks.getFireworks().getNumberOfCardsPlayed();
         } else if (Tokens.getTokens().getLife() == 0) {
             result = Players.numberOfPlayers + ";0";
         }
-        return result;
+        return !result.isEmpty();
     }
 
-    private void playerTurn(Player actualPlayer) {
+    void playerTurn(Player actualPlayer) {
         // AI logic comes here
         aiPlayer.chooseAction(actualPlayer);
         actualPlayer.setTheirTurn(false);
-
-        if (!isTest) {
-            table.repaintAll();
-        }
     }
+
+    public String getResult() {
+        return result;
+    }
+
 }

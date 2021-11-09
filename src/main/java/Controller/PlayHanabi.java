@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.concurrent.TimeUnit;
+
 import model.Fireworks;
 import model.HanabiCards;
 import model.Player;
@@ -9,17 +11,16 @@ import view.GameEndWindow;
 import view.GameTable;
 import view.SetupWindow;
 
-import javax.swing.JFrame;
-import java.util.concurrent.TimeUnit;
-
-public class PlayHanabi {
+public class PlayHanabi extends PlayAbstractClass {
 
     private GameTable table;
-    private AIPlayer aiPlayer;
+    private final AIPlayer aiPlayer;
+    private final int numberOfPlayers;
+    private final String playerName;
 
     public PlayHanabi() {
         SetupWindow setupWindow = new SetupWindow();
-        while(!setupWindow.done) {
+        while (!setupWindow.done) {
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
@@ -27,15 +28,15 @@ public class PlayHanabi {
             }
         }
         aiPlayer = new AIPlayer(setupWindow.getNumberOfPlayers(), false);
-        initGame(setupWindow, setupWindow.getNumberOfPlayers(), setupWindow.getName());
+        numberOfPlayers = setupWindow.getNumberOfPlayers();
+        playerName = setupWindow.getName();
+        initGame();
+        setupWindow.dispose();
     }
 
-    private void initGame(JFrame jFrame, int numberOfPlayers, String name) {
-        jFrame.dispose();
-
-        HanabiCards.DECK.shuffle();
-        Players.setupPlayers(numberOfPlayers, name);
-
+    void initGame() {
+        super.initGame(numberOfPlayers);
+        Players.initHumanPlayer(playerName);
         table = new GameTable();
     }
 
@@ -49,20 +50,17 @@ public class PlayHanabi {
             endOfDeck = HanabiCards.DECK.endOfDeck();
             gameEnd = endOfDeck || Tokens.getTokens().getLife() == 0 || Fireworks.getFireworks().allFireworksFinished();
         } while (!gameEnd);
-        if(endOfDeck) {
-            for (int i = 0; i < Players.numberOfPlayers; i++) {
-                Player actualPlayer = Players.nextPlayer();
-                actualPlayer.setTheirTurn(true);
-                playerTurn(actualPlayer);
-            }
+
+        //If the deck has run out, play one last turn
+        if (endOfDeck) {
+            lastRound();
         }
 
-        if(Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
+        if (Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
             GameEndWindow gameEndWindow = new GameEndWindow(Fireworks.getFireworks().getNumberOfCardsPlayed(), table, true);
             waitForDone(gameEndWindow);
             return gameEndWindow.done;
-        }
-        else if(Tokens.getTokens().getLife() == 0) {
+        } else if (Tokens.getTokens().getLife() == 0) {
             GameEndWindow gameEndWindow = new GameEndWindow(Fireworks.getFireworks().getNumberOfCardsPlayed(), table, false);
             waitForDone(gameEndWindow);
             return gameEndWindow.done;
@@ -70,8 +68,16 @@ public class PlayHanabi {
         return false;
     }
 
+    private void lastRound() {
+        for (int i = 0; i < Players.numberOfPlayers; i++) {
+            Player actualPlayer = Players.nextPlayer();
+            actualPlayer.setTheirTurn(true);
+            playerTurn(actualPlayer);
+        }
+    }
+
     private void waitForDone(GameEndWindow gameEndWindow) {
-        while(gameEndWindow.done == null) {
+        while (gameEndWindow.done == null) {
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
@@ -80,7 +86,7 @@ public class PlayHanabi {
         }
     }
 
-    private void playerTurn(Player actualPlayer) {
+    void playerTurn(Player actualPlayer) {
         // AI logic comes here
         if (actualPlayer.isAIPlayer()) {
             aiPlayer.chooseAction(actualPlayer);

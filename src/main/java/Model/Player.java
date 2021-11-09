@@ -1,19 +1,19 @@
 package model;
 
-import view.PlayerPanel;
-
 import static model.Card.CARD_OFFSET_X;
 import static view.HanabiUtilities.CARD_START_POS_X;
 import static view.HanabiUtilities.CARD_START_POS_Y;
+
+import view.PlayerPanel;
 
 public class Player {
     private static int index = 1;
 
     private PlayerPanel playerPanel;
     private String name;
-    private boolean humanPlayer;
+    private final boolean humanPlayer;
     private boolean firstPlayer;
-    private Hand hand;
+    private final Hand hand;
     private volatile boolean theirTurn;
 
     Player(boolean humanPlayer) {
@@ -22,10 +22,10 @@ public class Player {
         this.theirTurn = false;
         // Generate name
         if (humanPlayer) {
-            this.name = "Te";
+            this.name = "You";
             index = 1;
         } else {
-            this.name = "Gépi Játékos " + index;
+            this.name = index + ". AI Player";
             index++;
         }
 
@@ -84,7 +84,7 @@ public class Player {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Player)) {
+        if (!(obj instanceof Player)) {
             return false;
         }
         Player player = (Player) obj;

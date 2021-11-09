@@ -54,7 +54,7 @@ class AIPlayer {
         // 1. Play the playable card with lowest index.
         if (cardToPlay != null) {
             playACard(thisPlayer, cardToPlay);
-            actionMessage = thisPlayer.getName() + " kijátszott egy kártyát.";
+            actionMessage = thisPlayer.getName() + " kijátszotta a " + cardToPlay.getColor() + " " + cardToPlay.getNumber() + " kártyát.";
         } // 2. If there are hint tokens available && there is a player with playable cards in hand && we can give a hint that only shows the playable cards, give a hint.
         else if (Tokens.getTokens().getClues() > 0 && hintChooser(thisPlayer)) {
             giveHint();
@@ -62,11 +62,11 @@ class AIPlayer {
         } // 3. Discard the dead card with lowest index.
         else if (cardToDiscard != null) {
             discardACard(thisPlayer, cardToDiscard);
-            actionMessage = thisPlayer.getName() + " eldobott egy lapot.";
+            actionMessage = thisPlayer.getName() + " eldobta a " + cardToDiscard.getColor() + " " + cardToDiscard.getNumber() + "  lapot.";
         } // 4. Discard the expendable card with lowest index.
         else if (expendableCard != null) {
             discardACard(thisPlayer, expendableCard);
-            actionMessage = thisPlayer.getName() + " eldobott egy lapot.";
+            actionMessage = thisPlayer.getName() + " eldobta a " + expendableCard.getColor() + " " + expendableCard.getNumber() + "  lapot.";
         } // 5. Discard card c1 except if it's a 5.
         else {
             Card lastCard = thisPlayer.getHand().cards.get(0);
@@ -76,7 +76,7 @@ class AIPlayer {
                 index++;
             }
             discardACard(thisPlayer, lastCard);
-            actionMessage = thisPlayer.getName() + " eldobta a legrégebbi lapját.";
+            actionMessage = thisPlayer.getName() + " eldobta a legrégebbi lapját. (" + lastCard.getColor() + " " + lastCard.getNumber() + ")";
         }
 
         if (!isTest) {
