@@ -9,7 +9,7 @@ import model.Players;
 import model.SelectedSymbol;
 import model.Tokens;
 
-public class PlayTest extends PlayAbstractClass {
+public class PlayTest extends AbstractPlay {
     private final AIPlayer aiPlayer;
     private final int numberOfPlayers;
     private String result;
@@ -35,27 +35,9 @@ public class PlayTest extends PlayAbstractClass {
         HanabiCards.initDeck();
     }
 
-    public boolean play() {
-        boolean endOfDeck;
-        boolean gameEnd;
-        do {
-            Player actualPlayer = Players.nextPlayer();
-            actualPlayer.setTheirTurn(true);
-            playerTurn(actualPlayer);
-            endOfDeck = HanabiCards.DECK.endOfDeck();
-            gameEnd = endOfDeck || Tokens.getTokens().getLife() == 0 || Fireworks.getFireworks().allFireworksFinished();
-        } while (!gameEnd);
-
-        if (endOfDeck) {
-            for (int i = 0; i < Players.numberOfPlayers; i++) {
-                Player actualPlayer = Players.nextPlayer();
-                actualPlayer.setTheirTurn(true);
-                playerTurn(actualPlayer);
-            }
-        }
-
+    public boolean scoring() {
         result = "";
-        if (Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
+        if (Fireworks.getFireworks().allFireworksFinished() || HanabiCards.DECK.endOfDeck()) {
             result = Players.numberOfPlayers + ";" + Fireworks.getFireworks().getNumberOfCardsPlayed();
         } else if (Tokens.getTokens().getLife() == 0) {
             result = Players.numberOfPlayers + ";0";

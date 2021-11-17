@@ -11,7 +11,7 @@ import view.GameEndWindow;
 import view.GameTable;
 import view.SetupWindow;
 
-public class PlayHanabi extends PlayAbstractClass {
+public class PlayHanabi extends AbstractPlay {
 
     private GameTable table;
     private final AIPlayer aiPlayer;
@@ -40,23 +40,8 @@ public class PlayHanabi extends PlayAbstractClass {
         table = new GameTable();
     }
 
-    public boolean play() {
-        boolean endOfDeck;
-        boolean gameEnd;
-        do {
-            Player actualPlayer = Players.nextPlayer();
-            actualPlayer.setTheirTurn(true);
-            playerTurn(actualPlayer);
-            endOfDeck = HanabiCards.DECK.endOfDeck();
-            gameEnd = endOfDeck || Tokens.getTokens().getLife() == 0 || Fireworks.getFireworks().allFireworksFinished();
-        } while (!gameEnd);
-
-        //If the deck has run out, play one last turn
-        if (endOfDeck) {
-            lastRound();
-        }
-
-        if (Fireworks.getFireworks().allFireworksFinished() || endOfDeck) {
+    public boolean scoring() {
+        if (Fireworks.getFireworks().allFireworksFinished() || HanabiCards.DECK.endOfDeck()) {
             GameEndWindow gameEndWindow = new GameEndWindow(Fireworks.getFireworks().getNumberOfCardsPlayed(), table, true);
             waitForDone(gameEndWindow);
             return gameEndWindow.done;
@@ -68,13 +53,9 @@ public class PlayHanabi extends PlayAbstractClass {
         return false;
     }
 
-    private void lastRound() {
-        for (int i = 0; i < Players.numberOfPlayers; i++) {
-            Player actualPlayer = Players.nextPlayer();
-            actualPlayer.setTheirTurn(true);
-            playerTurn(actualPlayer);
-        }
-    }
+    //TODO: read from a property file if the game is in test mode or playable game mode
+    //TODO: rewrite active wait
+    //TODO: PlayerPanel must not contain controlling logic
 
     private void waitForDone(GameEndWindow gameEndWindow) {
         while (gameEndWindow.done == null) {
@@ -93,14 +74,18 @@ public class PlayHanabi extends PlayAbstractClass {
             actualPlayer.setTheirTurn(false);
             table.repaintAll();
         } else {
-            table.getControlPanel().playCardButton.setEnabled(true);
-            table.getControlPanel().discardCardButton.setEnabled(true);
-            table.getControlPanel().giveHintButton.setEnabled(true);
+            enableButtons();
 
             while (actualPlayer.isTheirTurn()) {
                 // Wait for player's action
                 // isTheirTurn changes in PlayerPanel, after action has been done
             }
         }
+    }
+
+    private void enableButtons() {
+        table.getControlPanel().playCardButton.setEnabled(true);
+        table.getControlPanel().discardCardButton.setEnabled(true);
+        table.getControlPanel().giveHintButton.setEnabled(true);
     }
 }

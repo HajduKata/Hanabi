@@ -26,7 +26,8 @@ public class HanabiMain {
             boolean exit = false;
             while (!exit) {
                 PlayHanabi playHanabi = new PlayHanabi();
-                exit = playHanabi.play();
+                playHanabi.play();
+                exit = playHanabi.scoring();
             }
         } // AI plays
         else {
@@ -45,6 +46,7 @@ public class HanabiMain {
                 for (int i = 0; i < numberOfTests; i++) {
                     PlayTest playTest = new PlayTest(numberOfPlayers);
                     playTest.play();
+                    playTest.scoring();
                     printWriter.println(playTest.getResult());
                 }
             }
