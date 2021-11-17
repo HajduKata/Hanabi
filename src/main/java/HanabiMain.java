@@ -9,17 +9,20 @@ Tesztüzemmód futtatásához a kikommentezett részt kell használni,
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Properties;
 
 import controller.PlayHanabi;
 import controller.PlayTest;
 
 public class HanabiMain {
+    private static boolean isTestGame;
 
     public static void main(String[] args) {
-        boolean isTestGame = false;
+        readProperties();
 
         // User plays
         if (!isTestGame) {
@@ -51,6 +54,27 @@ public class HanabiMain {
                 }
             }
             printWriter.close();
+        }
+    }
+
+    public static void readProperties() {
+        try (InputStream input = HanabiMain.class.getClassLoader().getResourceAsStream("config.properties")) {
+
+            Properties properties = new Properties();
+
+            if (input == null) {
+                System.out.println("Sorry, unable to find config.properties");
+                return;
+            }
+
+            // Load a properties file from class path, inside static method
+            properties.load(input);
+
+            // Get the property value and set it in isTestGame
+            isTestGame = properties.getProperty("testmode").equals("true");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }
