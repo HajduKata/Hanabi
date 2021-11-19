@@ -23,9 +23,9 @@ public class History {
     public void addString(String playerName, String color, String number) {
         String historyString = "";
         if (!color.equals("")) {
-            historyString = "<html>" + playerName + "-nak/-nek megmutatták<br/>a" + color + " színű lapjait.</html>";
+            historyString = "<html>" + playerName + " was showed their<br/>" + color + " colored cards.</html>";
         } else if (!number.equals("")) {
-            historyString = "<html>" + playerName + "-nak/-nek megmutatták<br/>a" + number + " számú lapjait.</html>";
+            historyString = "<html>" + playerName + " was showed their<br/>number " + number + " cards.</html>";
         }
         JLabel historyLabel = new JLabel(historyString);
         //historyLabel.setSize(new Dimension(RIGHT_PANEL_WIDTH-10, 450));
@@ -43,19 +43,19 @@ public class History {
         String string = "";
         switch (color) {
             case RED:
-                string = " piros";
+                string = "red";
                 break;
             case GREEN:
-                string = " zöld";
+                string = "green";
                 break;
             case BLUE:
-                string = " kék";
+                string = "blue";
                 break;
             case YELLOW:
-                string = " sárga";
+                string = "yellow";
                 break;
             case WHITE:
-                string = " fehér";
+                string = "white";
                 break;
         }
         return string;
@@ -65,19 +65,19 @@ public class History {
         String string = "";
         switch (number) {
             case ONE:
-                string = "z egyes";
+                string = "one";
                 break;
             case TWO:
-                string = " kettes";
+                string = "two";
                 break;
             case THREE:
-                string = " hármas";
+                string = "three";
                 break;
             case FOUR:
-                string = " négyes";
+                string = "four";
                 break;
             case FIVE:
-                string = "z ötös";
+                string = "five";
                 break;
         }
         return string;

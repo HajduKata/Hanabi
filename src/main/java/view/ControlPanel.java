@@ -71,9 +71,9 @@ public class ControlPanel extends JPanel {
 
         JLabel defaultLabel = new JLabel("Choose an action:");
         defaultLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JLabel playCardLabel = new JLabel("Play a card");
+        JLabel playCardLabel = new JLabel("Choose a card from your hand to play");
         playCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JLabel discardCardLabel = new JLabel("Discard a card");
+        JLabel discardCardLabel = new JLabel("Choose a card from your hand to discard");
         discardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         JLabel cannotDiscardCardLabel = new JLabel("You've reached the max number of clues allowed.");
         cannotDiscardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));

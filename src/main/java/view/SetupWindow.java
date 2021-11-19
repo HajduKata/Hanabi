@@ -25,8 +25,6 @@ public class SetupWindow extends JFrame implements ActionListener {
     private JTextField playerName = new JTextField();
     private int numberOfPlayers;
     private JComboBox numberOfPlayersComboBox = new JComboBox();
-//    private String diff;
-//    private JComboBox difficulty;
 
     public boolean done = false;
 
@@ -59,13 +57,6 @@ public class SetupWindow extends JFrame implements ActionListener {
         numberOfPlayersComboBox.addItem(4);
         numberOfPlayersComboBox.addItem(5);
         settingsPanel.add(numberOfPlayersComboBox);
-        /*
-        JLabel difficultyLabel = new JLabel("Játék nehézsége:");
-        settingsPanel.add(difficultyLabel);
-        String[] diff = {"Könnyű", "Közepes", "Nehéz"};
-        difficulty = new JComboBox(diff);
-        settingsPanel.add(difficulty);
-        */
 
         this.add(new Panel(), BorderLayout.PAGE_START);
         this.add(new Panel(), BorderLayout.LINE_START);
@@ -85,7 +76,6 @@ public class SetupWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         name = playerName.getText();
         numberOfPlayers = (int) numberOfPlayersComboBox.getSelectedItem();
-//        diff = (String) difficulty.getSelectedItem();
         done = true;
     }
 
@@ -97,7 +87,4 @@ public class SetupWindow extends JFrame implements ActionListener {
         return numberOfPlayers;
     }
 
-//    public String getDiff() {
-//        return diff;
-//    }
 }

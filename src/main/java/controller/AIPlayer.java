@@ -54,19 +54,19 @@ class AIPlayer {
         // 1. Play the playable card with lowest index.
         if (cardToPlay != null) {
             playACard(thisPlayer, cardToPlay);
-            actionMessage = thisPlayer.getName() + " kijátszotta a " + cardToPlay.getColor() + " " + cardToPlay.getNumber() + " kártyát.";
+            actionMessage = thisPlayer.getName() + " played a " + cardToPlay.getColor() + " " + cardToPlay.getNumber() + " card.";
         } // 2. If there are hint tokens available && there is a player with playable cards in hand && we can give a hint that only shows the playable cards, give a hint.
         else if (Tokens.getTokens().getClues() > 0 && hintChooser(thisPlayer)) {
             giveHint();
-            actionMessage = thisPlayer.getName() + " információt adott.";
+            actionMessage = thisPlayer.getName() + " gave a hint.";
         } // 3. Discard the dead card with lowest index.
         else if (cardToDiscard != null) {
             discardACard(thisPlayer, cardToDiscard);
-            actionMessage = thisPlayer.getName() + " eldobta a " + cardToDiscard.getColor() + " " + cardToDiscard.getNumber() + "  lapot.";
+            actionMessage = thisPlayer.getName() + " discarded a " + cardToDiscard.getColor() + " " + cardToDiscard.getNumber() + "  card.";
         } // 4. Discard the expendable card with lowest index.
         else if (expendableCard != null) {
             discardACard(thisPlayer, expendableCard);
-            actionMessage = thisPlayer.getName() + " eldobta a " + expendableCard.getColor() + " " + expendableCard.getNumber() + "  lapot.";
+            actionMessage = thisPlayer.getName() + " discarded a " + expendableCard.getColor() + " " + expendableCard.getNumber() + "  card.";
         } // 5. Discard card c1 except if it's a 5.
         else {
             Card lastCard = thisPlayer.getHand().cards.get(0);
@@ -76,11 +76,11 @@ class AIPlayer {
                 index++;
             }
             discardACard(thisPlayer, lastCard);
-            actionMessage = thisPlayer.getName() + " eldobta a legrégebbi lapját. (" + lastCard.getColor() + " " + lastCard.getNumber() + ")";
+            actionMessage = thisPlayer.getName() + " discarded their oldest card. (" + lastCard.getColor() + " " + lastCard.getNumber() + ")";
         }
 
         if (!isTest) {
-            JOptionPane.showMessageDialog(null, actionMessage, thisPlayer.getName() + " köre", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, actionMessage, thisPlayer.getName() + "'s turn", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
