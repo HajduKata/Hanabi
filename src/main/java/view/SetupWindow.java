@@ -41,7 +41,7 @@ public class SetupWindow extends JFrame implements ActionListener {
 
         // SetupWindow starts here
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Első Lépések");
+        this.setTitle("Setup");
         this.setSize(new Dimension(300, 200));
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(null);
@@ -49,10 +49,10 @@ public class SetupWindow extends JFrame implements ActionListener {
         JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-        JLabel nameLabel = new JLabel("Név:");
+        JLabel nameLabel = new JLabel("Name:");
         settingsPanel.add(nameLabel);
         settingsPanel.add(playerName);
-        JLabel numberOfPlayersLabel = new JLabel("Játékosok száma:");
+        JLabel numberOfPlayersLabel = new JLabel("Number of players:");
         settingsPanel.add(numberOfPlayersLabel);
         numberOfPlayersComboBox.addItem(2);
         numberOfPlayersComboBox.addItem(3);
@@ -73,7 +73,7 @@ public class SetupWindow extends JFrame implements ActionListener {
         this.add(new Panel(), BorderLayout.LINE_END);
 
         JPanel buttonPanel = new JPanel();
-        JButton confirmButton = new JButton("Játék indítása");
+        JButton confirmButton = new JButton("Start the game");
         confirmButton.addActionListener(this);
         buttonPanel.add(confirmButton);
 

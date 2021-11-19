@@ -16,7 +16,7 @@ import static view.GameTable.CARD_COLORS_DIMENSION;
 import static view.HanabiUtilities.BG_COLOR;
 
 public class DiscardedCardsPanel extends JPanel {
-    private static final String DISCARDED_CARDS_TITLE = "Eldobott lapok";
+    private static final String DISCARDED_CARDS_TITLE = "Discarded cards";
 
     private DiscardedCards discardedCards;
 

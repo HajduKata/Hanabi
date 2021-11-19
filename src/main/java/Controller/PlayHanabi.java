@@ -53,7 +53,6 @@ public class PlayHanabi extends AbstractPlay {
         return false;
     }
 
-    //TODO: read from a property file if the game is in test mode or playable game mode
     //TODO: rewrite active wait
     //TODO: PlayerPanel must not contain controlling logic
 

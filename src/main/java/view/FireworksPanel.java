@@ -15,7 +15,7 @@ import java.awt.Graphics;
  * UI Panel to show the firework piles.
  */
 public class FireworksPanel extends JPanel {
-    private static final String FIREWORKS_TITLE = "Tűzijátékok";
+    private static final String FIREWORKS_TITLE = "Fireworks";
     private static final Color BG_COLOR = Color.decode("#003375");
 
     private Fireworks fireworks;

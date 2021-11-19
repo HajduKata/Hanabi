@@ -14,8 +14,8 @@ public class CluePanel extends JPanel {
     private Tokens tokens;
     private JLabel lifeLabel;
     private JLabel clueLabel;
-    private String lifeString = "Életek: ";
-    private String tokenString = "Utalásjelzők: ";
+    private String lifeString = "Lives: ";
+    private String tokenString = "Clues: ";
 
     CluePanel(Tokens tokens) {
         this.tokens = tokens;

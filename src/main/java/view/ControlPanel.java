@@ -50,9 +50,9 @@ public class ControlPanel extends JPanel {
         controlButtonsContainer.setLayout(new BoxLayout(controlButtonsContainer, BoxLayout.Y_AXIS));
         controlButtonsContainer.setAlignmentX(CENTER_ALIGNMENT);
         controlButtonsContainer.setAlignmentY(TOP_ALIGNMENT);
-        playCardButton = new JButton("Kártya kijátszása");
-        discardCardButton = new JButton("Kártya eldobása");
-        giveHintButton = new JButton("Utalás adása");
+        playCardButton = new JButton("Play a card");
+        discardCardButton = new JButton("Discard a card");
+        giveHintButton = new JButton("Give hint");
         playCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
         discardCardButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
         giveHintButton.setMaximumSize(new Dimension(RIGHT_PANEL_WIDTH, BUTTON_HEIGHT));
@@ -69,13 +69,13 @@ public class ControlPanel extends JPanel {
         extensionPanel.setBorder(border);
         extensionPanel.setPreferredSize(new Dimension(RIGHT_PANEL_WIDTH, CONTROL_PANEL_HEIGHT));
 
-        JLabel defaultLabel = new JLabel("Válassz egy akciót");
+        JLabel defaultLabel = new JLabel("Choose an action:");
         defaultLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JLabel playCardLabel = new JLabel("Játssz ki a kezedből egy lapot");
+        JLabel playCardLabel = new JLabel("Play a card");
         playCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JLabel discardCardLabel = new JLabel("Dobj el a kezedből egy lapot");
+        JLabel discardCardLabel = new JLabel("Discard a card");
         discardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JLabel cannotDiscardCardLabel = new JLabel("Maximális utalásjelződ van.");
+        JLabel cannotDiscardCardLabel = new JLabel("You've reached the max number of clues allowed.");
         cannotDiscardCardLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         extensionPanel.add(defaultLabel, "default");
         extensionPanel.add(playCardLabel, "play");

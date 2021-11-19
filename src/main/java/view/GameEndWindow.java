@@ -23,11 +23,11 @@ public class GameEndWindow extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         String endGameText;
         if (won) {
-            this.setTitle("Győzelem!");
-            endGameText = "Gratulálunk! " + points + " pontot szereztél!";
+            this.setTitle("Victory!");
+            endGameText = "Congratulations! You've reached " + points + " points!";
         } else {
-            this.setTitle("Vereség");
-            endGameText = "Sajnos elvesztetted az összes életedet!";
+            this.setTitle("Game over!");
+            endGameText = "You've lost all your lives!";
         }
         this.setSize(new Dimension(300, 200));
         this.setLayout(new BorderLayout());
@@ -45,10 +45,10 @@ public class GameEndWindow extends JFrame implements ActionListener {
         this.add(new Panel(), BorderLayout.LINE_END);
 
         JPanel buttonPanel = new JPanel();
-        newGameButton = new JButton("Új játék indítása?");
+        newGameButton = new JButton("Play again");
         newGameButton.addActionListener(this);
         buttonPanel.add(newGameButton);
-        exitGameButton = new JButton("Kilépés a játékból?");
+        exitGameButton = new JButton("Quit");
         exitGameButton.addActionListener(this);
         buttonPanel.add(exitGameButton);
 
