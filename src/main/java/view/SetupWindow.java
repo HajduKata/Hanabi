@@ -22,20 +22,15 @@ import java.awt.event.ActionListener;
 
 public class SetupWindow extends JFrame implements ActionListener {
     private String name;
-    private JTextField playerName = new JTextField();
+    private final JTextField playerName = new JTextField();
     private int numberOfPlayers;
-    private JComboBox numberOfPlayersComboBox = new JComboBox();
+    private final JComboBox<Integer> numberOfPlayersComboBox = new JComboBox<>(new Integer[] {2, 3, 4, 5} );
 
     public boolean done = false;
 
     public SetupWindow() {
         // Clear all previous instances
-        DiscardedCards.clearInstance();
-        Fireworks.clearInstance();
-        History.clearInstance();
-        SelectedSymbol.clearInstance();
-        Tokens.clearInstance();
-        HanabiCards.initDeck();
+        clearInstances();
 
         // SetupWindow starts here
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,19 +39,7 @@ public class SetupWindow extends JFrame implements ActionListener {
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(null);
 
-        JPanel settingsPanel = new JPanel();
-        settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
-
-        JLabel nameLabel = new JLabel("Name:");
-        settingsPanel.add(nameLabel);
-        settingsPanel.add(playerName);
-        JLabel numberOfPlayersLabel = new JLabel("Number of players:");
-        settingsPanel.add(numberOfPlayersLabel);
-        numberOfPlayersComboBox.addItem(2);
-        numberOfPlayersComboBox.addItem(3);
-        numberOfPlayersComboBox.addItem(4);
-        numberOfPlayersComboBox.addItem(5);
-        settingsPanel.add(numberOfPlayersComboBox);
+        JPanel settingsPanel = createSettingsPanel();
 
         this.add(new Panel(), BorderLayout.PAGE_START);
         this.add(new Panel(), BorderLayout.LINE_START);
@@ -72,11 +55,40 @@ public class SetupWindow extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
+    private void clearInstances() {
+        DiscardedCards.clearInstance();
+        Fireworks.clearInstance();
+        History.clearInstance();
+        SelectedSymbol.clearInstance();
+        Tokens.clearInstance();
+        HanabiCards.initDeck();
+    }
+
+    private JPanel createSettingsPanel() {
+        JPanel settingsPanel = new JPanel();
+        settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
+        settingsPanel.add(new JLabel("Name:"));
+        settingsPanel.add(playerName);
+        settingsPanel.add(new JLabel("Number of players:"));
+        settingsPanel.add(numberOfPlayersComboBox);
+        return settingsPanel;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         name = playerName.getText();
-        numberOfPlayers = (int) numberOfPlayersComboBox.getSelectedItem();
+        numberOfPlayers = getSelectedComboBoxItem();
         done = true;
+    }
+
+    private int getSelectedComboBoxItem() {
+        switch (numberOfPlayersComboBox.getSelectedIndex()) {
+            case 1: return 3;
+            case 2: return 4;
+            case 3: return 5;
+            case 0:
+            default: return 2;
+        }
     }
 
     public String getName() {
