@@ -18,7 +18,7 @@ public class FireworksPanel extends JPanel {
     private static final String FIREWORKS_TITLE = "Fireworks";
     private static final Color BG_COLOR = Color.decode("#003375");
 
-    private Fireworks fireworks;
+    private final Fireworks fireworks;
 
     /**
      * Constructor for the fireworks panel.

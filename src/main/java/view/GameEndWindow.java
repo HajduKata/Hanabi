@@ -12,9 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameEndWindow extends JFrame implements ActionListener {
-    private GameTable gameTable;
-    private JButton newGameButton;
-    private JButton exitGameButton;
+    private final GameTable gameTable;
+    private final JButton newGameButton;
+    private final JButton exitGameButton;
     public Boolean done = null;
 
     public GameEndWindow(int points, GameTable gameTable, boolean won) {

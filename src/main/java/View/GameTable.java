@@ -22,7 +22,7 @@ import static view.HanabiUtilities.SYMBOL_SIZE_X;
 /**
  * The view of the table
  * Left panel: players cards
- * Mid panel: fireworks and dropped cards
+ * Middle panel: fireworks and dropped cards
  * Right panel: control symbols
  */
 public class GameTable extends JFrame {
@@ -95,7 +95,6 @@ public class GameTable extends JFrame {
         // Add CluePanel (life + clues) and controlPanel to container
         controlContainer.add(cluePanel);
         controlContainer.add(controlPanel);
-
 
         // Player cards panels
         JPanel playersContainer = new JPanel();

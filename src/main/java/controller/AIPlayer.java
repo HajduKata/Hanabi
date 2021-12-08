@@ -33,10 +33,10 @@ class AIPlayer {
     void chooseAction(Player thisPlayer) {
         /*
          * Action algorithm: A player will act using her private information with the following priority:
-         * 1. Play the playable card with lowest index.
+         * 1. Play the playable card with the lowest index.
          * 2. If there are hint tokens available, give a hint.
-         * 3. Discard the dead card with lowest index.
-         * 4. Discard the expendable card with lowest index.
+         * 3. Discard the dead card with the lowest index.
+         * 4. Discard the expendable card with the lowest index.
          * 5. Discard card c1.
          */
 
@@ -51,7 +51,7 @@ class AIPlayer {
         hintSymbol = new Symbol(null, null);
         playerToGiveHintTo = null;
 
-        // 1. Play the playable card with lowest index.
+        // 1. Play the playable card with the lowest index.
         if (cardToPlay != null) {
             playACard(thisPlayer, cardToPlay);
             actionMessage = thisPlayer.getName() + " played a " + cardToPlay.getColor() + " " + cardToPlay.getNumber() + " card.";
@@ -59,11 +59,11 @@ class AIPlayer {
         else if (Tokens.getTokens().getClues() > 0 && hintChooser(thisPlayer)) {
             giveHint();
             actionMessage = thisPlayer.getName() + " gave a hint.";
-        } // 3. Discard the dead card with lowest index.
+        } // 3. Discard the dead card with the lowest index.
         else if (cardToDiscard != null) {
             discardACard(thisPlayer, cardToDiscard);
             actionMessage = thisPlayer.getName() + " discarded a " + cardToDiscard.getColor() + " " + cardToDiscard.getNumber() + "  card.";
-        } // 4. Discard the expendable card with lowest index.
+        } // 4. Discard the expendable card with the lowest index.
         else if (expendableCard != null) {
             discardACard(thisPlayer, expendableCard);
             actionMessage = thisPlayer.getName() + " discarded a " + expendableCard.getColor() + " " + expendableCard.getNumber() + "  card.";
@@ -203,10 +203,10 @@ class AIPlayer {
     private boolean hintChooser(Player thisPlayer) {
         /*
          * The recommendation for a hand will be determined with following priority:
-         * 1. Recommend that the playable card of rank 5 with lowest index be played.
-         * 2. Recommend that the playable card with lowest rank be played. If there is a tie for lowest rank, recommend the one with lowest index.
-         * 3. Recommend that the dead card with lowest index be discarded.
-         * 4. Recommend that the card with highest rank that is expendable be discarded. If there is a tie, recommend the one with lowest index.
+         * 1. Recommend that the playable card of rank 5 with the lowest index be played.
+         * 2. Recommend that the playable card with the lowest rank be played. If there is a tie for lowest rank, recommend the one with the lowest index.
+         * 3. Recommend that the dead card with the lowest index be discarded.
+         * 4. Recommend that the card with the highest rank that is expendable be discarded. If there is a tie, recommend the one with the lowest index.
          * 5. Recommend that c1 be discarded.
          */
 

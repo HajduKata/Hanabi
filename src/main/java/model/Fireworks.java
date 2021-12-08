@@ -8,7 +8,7 @@ public class Fireworks {
 
     private static Fireworks instance;
     /* Holds the last card of each firework color */
-    private static Card[] fireworks = new Card[MAX_NUMBER_OF_COLORS];
+    private static final Card[] fireworks = new Card[MAX_NUMBER_OF_COLORS];
 
     private int numberOfCardsPlayed;
 
